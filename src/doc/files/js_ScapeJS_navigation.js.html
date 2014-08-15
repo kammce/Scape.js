@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>js/ScapeJS/navigation.js</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../assets/css/logo.png" title=""></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: </em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/AjaxCommunicator.html">AjaxCommunicator</a></li>
+            
+                <li><a href="../classes/Constructor.html">Constructor</a></li>
+            
+                <li><a href="../classes/ContentManipulator.html">ContentManipulator</a></li>
+            
+                <li><a href="../classes/Generator.html">Generator</a></li>
+            
+                <li><a href="../classes/Navigator.html">Navigator</a></li>
+            
+                <li><a href="../classes/Storage.html">Storage</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/ScapeJS.html">ScapeJS</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: js/ScapeJS/navigation.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+ * The Navigator class is the top level controller the guides all other controllers, models and views. When the url hash changes, Navigator activates and changes the page like a hyperlink, but instead does not actually force a reload of the page, but dynamically loads html into the set view. It also launches the construtor class which is used to construct, fill in and add events to all elements within a page.
+ *
+ * @class Navigator
+ * @constructor
+ * @main
+ */
+
+function Navigator() {
+	this.allowInterrupt = true;
+	this.previousHash = &quot;&quot;;
+	this.routes = [];
+	this.currentHash = &quot;&quot;;
+}
+/**
+ * The actual method that does all of the navigation and routing when the hash changes.
+ * This function will not allow itself to be interrupted. It will only change to another hash after it has completed uploading the page, and running the constructor procedure for the page. This keeps the website from running the same scripts over and over again for no reason. There is also a potential problem to having this run again before the last navi finished. If the second navi destructs the view wille the constructor is running and assuming that elements exist, events either do not get attached or events get doubled up on.
+ * @method navi
+ * @for Navigator
+ */
+Navigator.prototype.navi = function() {
+	var hash = this.getHash();
+	/* If allow interrupt is false, stop what you are doing */
+	if(!this.allowInterrupt) {
+		location.hash =	this.previous_hash;
+		return;
+	}
+	/* allow hash to change */
+	this.allowInterrupt = false;
+	console.debug(&quot;[NAVIGATION] hash = &quot; +hash);
+
+	if(objExists(this.routes[&quot;&quot;+hash])) {
+		this.routes[hash]();
+		this.previousHash = hash;
+	} else {
+		console.debug(&quot;[NAVIGATION] Could not find route: &#x27;&quot;+hash+&quot;&#x27;&quot;);
+	}
+	this.allowInterrupt = true;
+	this.currentHash = hash;
+};
+/**
+ * Creates a new route to go when the route name and the hash match up (NOTE: this ignores url parameters).
+ *
+ * @method addRoute
+ * @for Navigator
+ * @param key {String} key associated with url hash.
+ * @param page {Object} url to the page to be viewed.
+ * @param funct {Object} overrides default function which runs constructor and manipulator.
+ */
+Navigator.prototype.addRoute = function(key, page, funct) {
+	var parent = this;
+	this.routes[key] = function() {
+		maninpulator.clearView();
+		maninpulator.setTargetDivAjax(page, function() {
+			if(objExists(funct)) {
+				funct();
+			} else {
+				constructor.setup(key);
+				maninpulator.presentView();
+			}
+			allowInterrupt = true;
+		});
+	};
+};
+/**
+ * [PROTOTYPE:] Creates a new route to go when the route name and the hash match up (NOTE: this ignores url parameters). Used for modular website design. DO NOT USE.
+ *
+ * @method addRoute
+ * @for Navigator
+ * @param key {String} key associated with url hash.
+ * @param page {Object} url to the page to be viewed.
+ * @param funct {Object} overrides default function which runs constructor and manipulator.
+ */
+Navigator.prototype.addModularRoute = function(key, page, funct) {
+	this.routes[key] = function() {
+		maninpulator.clearView();
+		path[key] = &quot;modules/&quot;+key+&quot;/&quot;+storage.get(&quot;profile&quot;).privilege+&quot;/&quot;;
+		console.debug(path[key]+&quot;::&quot;+key);
+		maninpulator.setModularDivAjax(page, function() {
+			// NOTE: The key is also the folder
+			if(objExists(funct)) {
+				funct();
+			} else {
+				//constructor.setup(page);
+				maninpulator.presentView();
+				allowInterrupt = true;
+			}
+		});
+	};
+};
+/**
+ * Delete route.
+ *
+ * @method removeRoute
+ * @for Navigator
+ * @param page {String} key associated with route.
+ */
+Navigator.prototype.removeRoute = function(key) {
+	delete this.routes[key];
+};
+/**
+ * Clear all routes.
+ *
+ * @method clear
+ * @for Navigator
+ */
+Navigator.prototype.clear = function() {
+	this.keys = [];
+};
+/**
+ * Attaches Navigator class from window &quot;hashchange&quot; event listener.
+ *
+ * @method enableRouting
+ * @for Navigator
+ */
+Navigator.prototype.enableRouting = function() {
+	var parent = this;
+	var nav = function() { parent.navi(); }
+	window.addEventListener(&quot;hashchange&quot;, nav, false);
+	nav();
+};
+/**
+ * Calls navi event to reload page.
+ *
+ * @method reload
+ * @for Navigator
+ */
+Navigator.prototype.reload = function() {
+	this.navi();
+};
+/**
+ * Detaches Navigator class from window &quot;hashchange&quot; event listener.
+ *
+ * @method disableRouting
+ * @for Navigator
+ */
+Navigator.prototype.disableRouting = function() {
+	window.addEventListener(&quot;hashchange&quot;, function(){}, false);
+};
+
+/**
+ * Get a specific url parameter.
+ *
+ * @method getUrlParameter
+ * @for Navigator
+ * @param param {String} parameter to retrieve
+ * @return {String} url parameter
+ */
+Navigator.prototype.getUrlParameter = function(param) {
+	var hash = location.hash;
+	if(location.hash.indexOf(param) == -1) {
+		return &quot;&quot;;
+	}
+	var start = hash.indexOf(param)+param.length+1;
+	var end = hash.indexOf(&quot;&amp;&quot;, start);
+	var value = &quot;&quot;;
+	if(end != -1) {
+		value = hash.substr(start, end-start);
+	} else {
+		value = hash.substr(start);
+	}
+	return value;
+};
+
+/**
+ * Get a specific url parameter.
+ *
+ * @method changeHashParameter
+ * @for Navigator
+ * @param param {String} parameter name
+ * @param value {String} parameter&#x27;s new value
+ * @return {Boolean} if it has been found and has been changed, return true.
+ */
+Navigator.prototype.changeHashParameter = function(param, value) {
+	var hash = location.hash;
+	if(location.hash.indexOf(param) == -1) {
+		return false;
+	}
+	//starts right after the equals sign
+	var start = hash.indexOf(param)+param.length+1;
+	var end = hash.indexOf(&quot;&amp;&quot;, start);
+	var new_hash = &quot;&quot;;
+	if(end != -1) {
+		new_hash = hash.substr(0, start)+value+hash.substr(end);
+	} else {
+		new_hash = hash.substr(0,start)+value;
+	}
+	location.hash = new_hash;
+	return true;
+};
+
+/**
+ * Get the current hash.
+ *
+ * @method getHash
+ * @for Navigator
+ * @return {String} currrent url hash.
+ */
+Navigator.prototype.getHash = function() {
+	var hash = location.hash;
+	hash = hash.substr(1); // remove the #
+	var end = hash.indexOf(&quot;?&quot;);
+	if(end != -1) {
+		hash = hash.substr(0, end);
+	}
+	return hash;
+};
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

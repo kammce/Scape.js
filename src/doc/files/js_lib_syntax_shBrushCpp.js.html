@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>js/lib/syntax/shBrushCpp.js</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../assets/css/logo.png" title=""></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: </em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/AjaxCommunicator.html">AjaxCommunicator</a></li>
+            
+                <li><a href="../classes/Constructor.html">Constructor</a></li>
+            
+                <li><a href="../classes/ContentManipulator.html">ContentManipulator</a></li>
+            
+                <li><a href="../classes/Generator.html">Generator</a></li>
+            
+                <li><a href="../classes/Navigator.html">Navigator</a></li>
+            
+                <li><a href="../classes/Storage.html">Storage</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/ScapeJS.html">ScapeJS</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: js/lib/syntax/shBrushCpp.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+ * SyntaxHighlighter
+ * http://alexgorbatchev.com/SyntaxHighlighter
+ *
+ * SyntaxHighlighter is donationware. If you are using it, please donate.
+ * http://alexgorbatchev.com/SyntaxHighlighter/donate.html
+ *
+ * @version
+ * 3.0.83 (July 02 2010)
+ * 
+ * @copyright
+ * Copyright (C) 2004-2010 Alex Gorbatchev.
+ *
+ * @license
+ * Dual licensed under the MIT and GPL licenses.
+ */
+;(function()
+{
+	// CommonJS
+	typeof(require) != &#x27;undefined&#x27; ? SyntaxHighlighter = require(&#x27;shCore&#x27;).SyntaxHighlighter : null;
+
+	function Brush()
+	{
+		// Copyright 2006 Shin, YoungJin
+	
+		var datatypes =	&#x27;ATOM BOOL BOOLEAN BYTE CHAR COLORREF DWORD DWORDLONG DWORD_PTR &#x27; +
+						&#x27;DWORD32 DWORD64 FLOAT HACCEL HALF_PTR HANDLE HBITMAP HBRUSH &#x27; +
+						&#x27;HCOLORSPACE HCONV HCONVLIST HCURSOR HDC HDDEDATA HDESK HDROP HDWP &#x27; +
+						&#x27;HENHMETAFILE HFILE HFONT HGDIOBJ HGLOBAL HHOOK HICON HINSTANCE HKEY &#x27; +
+						&#x27;HKL HLOCAL HMENU HMETAFILE HMODULE HMONITOR HPALETTE HPEN HRESULT &#x27; +
+						&#x27;HRGN HRSRC HSZ HWINSTA HWND INT INT_PTR INT32 INT64 LANGID LCID LCTYPE &#x27; +
+						&#x27;LGRPID LONG LONGLONG LONG_PTR LONG32 LONG64 LPARAM LPBOOL LPBYTE LPCOLORREF &#x27; +
+						&#x27;LPCSTR LPCTSTR LPCVOID LPCWSTR LPDWORD LPHANDLE LPINT LPLONG LPSTR LPTSTR &#x27; +
+						&#x27;LPVOID LPWORD LPWSTR LRESULT PBOOL PBOOLEAN PBYTE PCHAR PCSTR PCTSTR PCWSTR &#x27; +
+						&#x27;PDWORDLONG PDWORD_PTR PDWORD32 PDWORD64 PFLOAT PHALF_PTR PHANDLE PHKEY PINT &#x27; +
+						&#x27;PINT_PTR PINT32 PINT64 PLCID PLONG PLONGLONG PLONG_PTR PLONG32 PLONG64 POINTER_32 &#x27; +
+						&#x27;POINTER_64 PSHORT PSIZE_T PSSIZE_T PSTR PTBYTE PTCHAR PTSTR PUCHAR PUHALF_PTR &#x27; +
+						&#x27;PUINT PUINT_PTR PUINT32 PUINT64 PULONG PULONGLONG PULONG_PTR PULONG32 PULONG64 &#x27; +
+						&#x27;PUSHORT PVOID PWCHAR PWORD PWSTR SC_HANDLE SC_LOCK SERVICE_STATUS_HANDLE SHORT &#x27; +
+						&#x27;SIZE_T SSIZE_T TBYTE TCHAR UCHAR UHALF_PTR UINT UINT_PTR UINT32 UINT64 ULONG &#x27; +
+						&#x27;ULONGLONG ULONG_PTR ULONG32 ULONG64 USHORT USN VOID WCHAR WORD WPARAM WPARAM WPARAM &#x27; +
+						&#x27;char bool short int __int32 __int64 __int8 __int16 long float double __wchar_t &#x27; +
+						&#x27;clock_t _complex _dev_t _diskfree_t div_t ldiv_t _exception _EXCEPTION_POINTERS &#x27; +
+						&#x27;FILE _finddata_t _finddatai64_t _wfinddata_t _wfinddatai64_t __finddata64_t &#x27; +
+						&#x27;__wfinddata64_t _FPIEEE_RECORD fpos_t _HEAPINFO _HFILE lconv intptr_t &#x27; +
+						&#x27;jmp_buf mbstate_t _off_t _onexit_t _PNH ptrdiff_t _purecall_handler &#x27; +
+						&#x27;sig_atomic_t size_t _stat __stat64 _stati64 terminate_function &#x27; +
+						&#x27;time_t __time64_t _timeb __timeb64 tm uintptr_t _utimbuf &#x27; +
+						&#x27;va_list wchar_t wctrans_t wctype_t wint_t signed&#x27;;
+
+		var keywords =	&#x27;break case catch class const __finally __exception __try &#x27; +
+						&#x27;const_cast continue private public protected __declspec &#x27; +
+						&#x27;default delete deprecated dllexport dllimport do dynamic_cast &#x27; +
+						&#x27;else enum explicit extern if for friend goto inline &#x27; +
+						&#x27;mutable naked namespace new noinline noreturn nothrow &#x27; +
+						&#x27;register reinterpret_cast return selectany &#x27; +
+						&#x27;sizeof static static_cast struct switch template this &#x27; +
+						&#x27;thread throw true false try typedef typeid typename union &#x27; +
+						&#x27;using uuid virtual void volatile whcar_t while&#x27;;
+					
+		var functions =	&#x27;assert isalnum isalpha iscntrl isdigit isgraph islower isprint&#x27; +
+						&#x27;ispunct isspace isupper isxdigit tolower toupper errno localeconv &#x27; +
+						&#x27;setlocale acos asin atan atan2 ceil cos cosh exp fabs floor fmod &#x27; +
+						&#x27;frexp ldexp log log10 modf pow sin sinh sqrt tan tanh jmp_buf &#x27; +
+						&#x27;longjmp setjmp raise signal sig_atomic_t va_arg va_end va_start &#x27; +
+						&#x27;clearerr fclose feof ferror fflush fgetc fgetpos fgets fopen &#x27; +
+						&#x27;fprintf fputc fputs fread freopen fscanf fseek fsetpos ftell &#x27; +
+						&#x27;fwrite getc getchar gets perror printf putc putchar puts remove &#x27; +
+						&#x27;rename rewind scanf setbuf setvbuf sprintf sscanf tmpfile tmpnam &#x27; +
+						&#x27;ungetc vfprintf vprintf vsprintf abort abs atexit atof atoi atol &#x27; +
+						&#x27;bsearch calloc div exit free getenv labs ldiv malloc mblen mbstowcs &#x27; +
+						&#x27;mbtowc qsort rand realloc srand strtod strtol strtoul system &#x27; +
+						&#x27;wcstombs wctomb memchr memcmp memcpy memmove memset strcat strchr &#x27; +
+						&#x27;strcmp strcoll strcpy strcspn strerror strlen strncat strncmp &#x27; +
+						&#x27;strncpy strpbrk strrchr strspn strstr strtok strxfrm asctime &#x27; +
+						&#x27;clock ctime difftime gmtime localtime mktime strftime time&#x27;;
+
+		this.regexList = [
+			{ regex: SyntaxHighlighter.regexLib.singleLineCComments,	css: &#x27;comments&#x27; },			// one line comments
+			{ regex: SyntaxHighlighter.regexLib.multiLineCComments,		css: &#x27;comments&#x27; },			// multiline comments
+			{ regex: SyntaxHighlighter.regexLib.doubleQuotedString,		css: &#x27;string&#x27; },			// strings
+			{ regex: SyntaxHighlighter.regexLib.singleQuotedString,		css: &#x27;string&#x27; },			// strings
+			{ regex: /^ *#.*/gm,										css: &#x27;preprocessor&#x27; },
+			{ regex: new RegExp(this.getKeywords(datatypes), &#x27;gm&#x27;),		css: &#x27;color1 bold&#x27; },
+			{ regex: new RegExp(this.getKeywords(functions), &#x27;gm&#x27;),		css: &#x27;functions bold&#x27; },
+			{ regex: new RegExp(this.getKeywords(keywords), &#x27;gm&#x27;),		css: &#x27;keyword bold&#x27; }
+			];
+	};
+
+	Brush.prototype	= new SyntaxHighlighter.Highlighter();
+	Brush.aliases	= [&#x27;cpp&#x27;, &#x27;c&#x27;];
+
+	SyntaxHighlighter.brushes.Cpp = Brush;
+
+	// CommonJS
+	typeof(exports) != &#x27;undefined&#x27; ? exports.Brush = Brush : null;
+})();
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

@@ -1,0 +1,2884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>lib/swift/test-suite/xpath-legacy.js</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../assets/css/logo.png" title=""></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: </em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/AjaxCommunicator.html">AjaxCommunicator</a></li>
+            
+                <li><a href="../classes/Constructor.html">Constructor</a></li>
+            
+                <li><a href="../classes/ContentManipulator.html">ContentManipulator</a></li>
+            
+                <li><a href="../classes/Generator.html">Generator</a></li>
+            
+                <li><a href="../classes/Navigator.html">Navigator</a></li>
+            
+                <li><a href="../classes/Storage.html">Storage</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/ScapeJS.html">ScapeJS</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: lib/swift/test-suite/xpath-legacy.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/*  JavaScript-XPath 0.1.5
+ *  (c) 2007 Cybozu Labs, Inc.
+ *
+ *  JavaScript-XPath is freely distributable under the terms of an MIT-style license.
+ *  For details, see the JavaScript-XPath web site: http://coderepos.org/share/wiki/JavaScript-XPath
+ *
+/*--------------------------------------------------------------------------*/
+
+if (!document.implementation
+                || !document.implementation.hasFeature
+                || !document.implementation.hasFeature(&quot;XPath&quot;, null)) (function() {
+
+var undefined = void(0);
+
+
+var defaultConfig = {
+    targetFrame: undefined
+};
+
+var config;
+
+if (window.jsxpath) {
+    config = window.jsxpath;
+}
+else {
+    var scriptElms = document.getElementsByTagName(&#x27;script&#x27;);
+    var scriptElm = scriptElms[scriptElms.length - 1];
+    var scriptSrc = scriptElm.src;
+    config = {};
+    var scriptSrcMatchResult = scriptSrc.match(/\?(.*)$/);
+    if (scriptSrcMatchResult) {
+        var configStrings = scriptSrcMatchResult[1].split(&#x27;&amp;&#x27;);
+        for (var i = 0, l = configStrings.length; i &lt; l; i ++) {
+            var configString = configStrings[i];
+            var configStringSplited = configString.split(&#x27;=&#x27;);
+            config[configStringSplited[0]] = configStringSplited[1] || true;
+        }
+    }
+}
+
+for (var n in defaultConfig) {
+    if (!(n in config)) config[n] = defaultConfig[n]
+}
+
+
+var BinaryExpr;
+var FilterExpr;
+var FunctionCall;
+var Literal;
+var NameTest;
+var NodeSet;
+var NodeType;
+var NodeUtil;
+var Number;
+var PathExpr;
+var Step;
+var UnaryExpr;
+var UnionExpr;
+var VariableReference;
+
+/*
+ * object: user agent identifier
+ */
+var uai = new function() {
+
+    var ua = navigator.userAgent;
+
+    if (RegExp == undefined) {
+        if (ua.indexOf(&quot;Opera&quot;) &gt;= 0) { 
+            this.opera = true; 
+        } else if (ua.indexOf(&quot;Netscape&quot;) &gt;= 0) { 
+            this.netscape = true; 
+        } else if (ua.indexOf(&quot;Mozilla/&quot;) == 0) { 
+            this.mozilla = true; 
+        } else {
+            this.unknown = slide 
+        }
+        
+        if (ua.indexOf(&quot;Gecko/&quot;) &gt;= 0) { 
+            this.gecko = true; 
+        }
+        
+        if (ua.indexOf(&quot;Win&quot;) &gt;= 0) { 
+            this.windows = true; 
+        } else if (ua.indexOf(&quot;Mac&quot;) &gt;= 0) { 
+            this.mac = true; 
+        } else if (ua.indexOf(&quot;Linux&quot;) &gt;= 0) { 
+            this.linux = true; 
+        } else if (ua.indexOf(&quot;BSD&quot;) &gt;= 0) { 
+            this.bsd = true; 
+        } else if (ua.indexOf(&quot;SunOS&quot;) &gt;= 0) { 
+            this.sunos = true; 
+        }
+    }
+    else {  
+    
+        /* for Trident/Tasman */
+        /*@cc_on
+        @if (@_jscript)
+            function jscriptVersion() {
+                switch (@_jscript_version) {
+                    case 3.0:  return &quot;4.0&quot;;
+                    case 5.0:  return &quot;5.0&quot;;
+                    case 5.1:  return &quot;5.01&quot;;
+                    case 5.5:  return &quot;5.5&quot;;
+                    case 5.6:
+                        if (&quot;XMLHttpRequest&quot; in window) return &quot;7.0&quot;;
+                        return &quot;6.0&quot;;
+                    case 5.7:
+                        return &quot;7.0&quot;;
+                    default:   return true;
+                }
+            }
+            if (@_win16 || @_win32 || @_win64) {
+                this.windows = true;
+                this.trident = jscriptVersion();
+            } else if (@_mac || navigator.platform.indexOf(&quot;Mac&quot;) &gt;= 0) {
+                // &#x27;@_mac&#x27; may be &#x27;NaN&#x27; even if the platform is Mac,
+                // so we check &#x27;navigator.platform&#x27;, too.
+                this.mac = true;
+                this.tasman = jscriptVersion();
+            }
+            if (match = ua.match(&quot;MSIE ?(\\d+\\.\\d+)b?;&quot;)) {
+                this.ie = match[1];
+                this[&#x27;ie&#x27; + match[1].charAt(0)] = true;
+            }
+        @else @*/
+
+        /* for AppleWebKit */
+        if (match = ua.match(&quot;AppleWebKit/(\\d+(\\.\\d+)*)&quot;)) {
+            this.applewebkit = match[1];
+            this[&#x27;applewebkit&#x27; + match[1].charAt(0)] = true;
+        }
+
+        /* for Gecko */
+        else if (typeof(Components) == &quot;object&quot;) {
+            if (match = ua.match(&quot;Gecko/(\\d{8})&quot;)) {
+                this.gecko = match[1];
+            } else if (navigator.product == &quot;Gecko&quot;
+                    &amp;&amp; (match = navigator.productSub.match(&quot;^(\\d{8})$&quot;))) {
+                this.gecko = match[1];
+            }
+        }
+
+        /*@end @*/
+
+        if (typeof(opera) == &quot;object&quot; &amp;&amp; typeof(opera.version) == &quot;function&quot;) {
+            this.opera = opera.version(); 
+            this[&#x27;opera&#x27; + this.opera[0] + this.opera[2]] = true;
+            
+        } else if (typeof(opera) == &quot;object&quot;
+                &amp;&amp; (match = ua.match(&quot;Opera[/ ](\\d+\\.\\d+)&quot;))) {
+            this.opera = match[1];
+        } else if (this.ie) {
+        } else if (match = ua.match(&quot;Safari/(\\d+(\\.\\d+)*)&quot;)) {
+            this.safari = match[1];
+        } else if (match = ua.match(&quot;Konqueror/(\\d+(\\.\\d+)*)&quot;)) {
+            this.konqueror = match[1];
+        } else if (ua.indexOf(&quot;(compatible;&quot;) &lt; 0
+                &amp;&amp; (match = ua.match(&quot;^Mozilla/(\\d+\\.\\d+)&quot;))) {
+            this.mozilla = match[1];
+            if (match = ua.match(&quot;\\([^(]*rv:(\\d+(\\.\\d+)*).*?\\)&quot;))
+                this.mozillarv = match[1];
+            if (match = ua.match(&quot;Firefox/(\\d+(\\.\\d+)*)&quot;)) {
+                this.firefox = match[1];
+            } else if (match = ua.match(&quot;Netscape\\d?/(\\d+(\\.\\d+)*)&quot;)) {
+                this.netscape = match[1];
+            }
+        } else {
+            this.unknown = true;
+        }
+
+        if (ua.indexOf(&quot;Win 9x 4.90&quot;) &gt;= 0) {
+            this.windows = &quot;ME&quot;;
+        } else if (match = ua.match(&quot;Win(dows)? ?(NT ?(\\d+\\.\\d+)?|\\d+|XP|ME|Vista)&quot;)) {
+            this.windows = match[2];
+            if (match[3]) {
+                this.winnt = match[3];
+            } else switch (match[2]) {
+                case &quot;2000&quot;:   this.winnt = &quot;5.0&quot;;  break;
+                case &quot;XP&quot;:     this.winnt = &quot;5.1&quot;;  break;
+                case &quot;Vista&quot;:  this.winnt = &quot;6.0&quot;;  break;
+            }
+        } else if (ua.indexOf(&quot;Mac&quot;) &gt;= 0) {
+            this.mac = true;
+        } else if (ua.indexOf(&quot;Linux&quot;) &gt;= 0) {
+            this.linux = true;
+        } else if (match = ua.match(&quot;\\w*BSD&quot;)) {
+            this.bsd = match[0];
+        } else if (ua.indexOf(&quot;SunOS&quot;) &gt;= 0) {
+            this.sunos = true;
+        }
+    }
+};
+
+
+/**
+ * pseudo class: Lexer
+ */
+var Lexer = function(source) {
+    var proto = Lexer.prototype;
+    var tokens = source.match(proto.regs.token);
+    for (var i = 0, l = tokens.length; i &lt; l; i ++) {
+        if (proto.regs.strip.test(tokens[i])) {
+            tokens.splice(i, 1);
+        }
+    }
+    for (var n in proto) tokens[n] = proto[n];
+    tokens.index = 0;
+    return tokens;
+};
+
+Lexer.prototype.regs = {
+    token: /\$?(?:(?![0-9-])[\w-]+:)?(?![0-9-])[\w-]+|\/\/|\.\.|::|\d+(?:\.\d*)?|\.\d+|&quot;[^&quot;]*&quot;|&#x27;[^&#x27;]*&#x27;|[!&lt;&gt;]=|(?![0-9-])[\w-]+:\*|\s+|./g,
+    strip: /^\s/
+};
+
+Lexer.prototype.peek = function(i) {
+    return this[this.index + (i||0)];
+};
+Lexer.prototype.next = function() {
+    return this[this.index++];
+};
+Lexer.prototype.back = function() {
+    this.index--;
+};
+Lexer.prototype.empty = function() {
+    return this.length &lt;= this.index;
+};
+
+
+/**
+ * class: Ctx
+ */
+var Ctx = function(node, position, last) {
+    this.node = node;
+    this.position = position || 1;
+    this.last = last || 1;
+};
+
+
+/**
+ * abstract class: BaseExpr
+ */
+var BaseExpr = function() {};
+
+BaseExpr.prototype.number = function(ctx) {
+    var exrs = this.evaluate(ctx);
+    if (exrs.isNodeSet) return exrs.number();
+    return + exrs;
+};
+
+BaseExpr.prototype.string = function(ctx) {
+    var exrs = this.evaluate(ctx);
+    if (exrs.isNodeSet) return exrs.string();
+    return &#x27;&#x27; + exrs;
+};
+
+BaseExpr.prototype.bool = function(ctx) {
+    var exrs = this.evaluate(ctx);
+    if (exrs.isNodeSet) return exrs.bool();
+    return !! exrs;
+};
+
+
+/**
+ * abstract class: BaseExprHasPredicates
+ */
+var BaseExprHasPredicates = function() {};
+
+BaseExprHasPredicates.parsePredicates = function(lexer, expr) {
+    while (lexer.peek() == &#x27;[&#x27;) {
+        lexer.next();
+        if (lexer.empty()) {
+            throw Error(&#x27;missing predicate expr&#x27;);
+        }
+        var predicate = BinaryExpr.parse(lexer);
+        expr.predicate(predicate);
+        if (lexer.empty()) {
+            throw Error(&#x27;unclosed predicate expr&#x27;);
+        }
+        if (lexer.next() != &#x27;]&#x27;) {
+            lexer.back();
+            throw Error(&#x27;bad token: &#x27; + lexer.next());
+        }
+    }
+};
+
+BaseExprHasPredicates.prototyps = new BaseExpr();
+
+BaseExprHasPredicates.prototype.evaluatePredicates = function(nodeset, start) {
+    var predicates, predicate, nodes, node, nodeset, position, reverse;
+
+    reverse = this.reverse;
+    predicates = this.predicates;
+
+    nodeset.sort();
+
+    for (var i = start || 0, l0 = predicates.length; i &lt; l0; i ++) {
+        predicate = predicates[i];
+
+        var deleteIndexes = [];
+        var nodes = nodeset.list();
+
+        for (var j = 0, l1 = nodes.length; j &lt; l1; j ++) {
+
+            position = reverse ? (l1 - j) : (j + 1);
+            exrs = predicate.evaluate(new Ctx(nodes[j], position, l1));
+
+            switch (typeof exrs) {
+                case &#x27;number&#x27;:
+                    exrs = (position == exrs);
+                    break;
+                case &#x27;string&#x27;:
+                    exrs = !!exrs;
+                    break;
+                case &#x27;object&#x27;:
+                    exrs = exrs.bool();
+                    break;
+            }
+
+            if (!exrs) {
+                deleteIndexes.push(j);
+            }
+        }
+
+        for (var j = deleteIndexes.length - 1, l1 = 0; j &gt;= l1; j --) {
+            nodeset.del(deleteIndexes[j]);
+        }
+
+    }
+
+    return nodeset;
+};
+
+
+/**
+ * class: BinaryExpr
+ */
+if (!window.BinaryExpr &amp;&amp; window.defaultConfig)
+    window.BinaryExpr = null;
+
+BinaryExpr = function(op, left, right, datatype) {
+    this.op = op;
+    this.left = left;
+    this.right = right;
+
+    this.datatype = BinaryExpr.ops[op][2];
+
+    this.needContextPosition = left.needContextPosition || right.needContextPosition;
+    this.needContextNode = left.needContextNode || right.needContextNode;
+
+    // Optimize [@id=&quot;foo&quot;] and [@name=&quot;bar&quot;]
+    if (this.op == &#x27;=&#x27;) {
+        if (!right.needContextNode &amp;&amp; !right.needContextPosition &amp;&amp; 
+            right.datatype != &#x27;nodeset&#x27; &amp;&amp; right.datatype != &#x27;void&#x27; &amp;&amp; left.quickAttr) {
+            this.quickAttr = true;
+            this.attrName = left.attrName;
+            this.attrValueExpr = right;
+        }
+        else if (!left.needContextNode &amp;&amp; !left.needContextPosition &amp;&amp; 
+            left.datatype != &#x27;nodeset&#x27; &amp;&amp; left.datatype != &#x27;void&#x27; &amp;&amp; right.quickAttr) {
+            this.quickAttr = true;
+            this.attrName = right.attrName;
+            this.attrValueExpr = left;
+        }
+    }
+};
+
+BinaryExpr.compare = function(op, comp, left, right, ctx) {
+    var type, lnodes, rnodes, nodes, nodeset, primitive;
+
+    left = left.evaluate(ctx);
+    right = right.evaluate(ctx);
+
+    if (left.isNodeSet &amp;&amp; right.isNodeSet) {
+        lnodes = left.list();
+        rnodes = right.list();
+        for (var i = 0, l0 = lnodes.length; i &lt; l0; i ++)
+            for (var j = 0, l1 = rnodes.length; j &lt; l1; j ++)
+                if (comp(NodeUtil.to(&#x27;string&#x27;, lnodes[i]), NodeUtil.to(&#x27;string&#x27;, rnodes[j])))
+                    return true;
+        return false;
+    }
+
+    if (left.isNodeSet || right.isNodeSet) {
+        if (left.isNodeSet)
+            nodeset = left, primitive = right;
+        else
+            nodeset = right, primitive = left;
+
+        nodes = nodeset.list();
+        type = typeof primitive;
+        for (var i = 0, l = nodes.length; i &lt; l; i ++) {
+            if (comp(NodeUtil.to(type, nodes[i]), primitive))
+                return true;
+        }
+        return false;
+    }
+
+    if (op == &#x27;=&#x27; || op == &#x27;!=&#x27;) {
+        if (typeof left == &#x27;boolean&#x27; || typeof right == &#x27;boolean&#x27;) {
+            return comp(!!left, !!right);
+        }
+        if (typeof left == &#x27;number&#x27; || typeof right == &#x27;number&#x27;) {
+            return comp(+left, +right);
+        }
+        return comp(left, right);
+    }
+
+    return comp(+left, +right);
+};
+
+
+BinaryExpr.ops = {
+    &#x27;div&#x27;: [6, function(left, right, ctx) {
+        return left.number(ctx) / right.number(ctx);
+    }, &#x27;number&#x27;],
+    &#x27;mod&#x27;: [6, function(left, right, ctx) {
+        return left.number(ctx) % right.number(ctx);
+    }, &#x27;number&#x27;],
+    &#x27;*&#x27;: [6, function(left, right, ctx) {
+        return left.number(ctx) * right.number(ctx);
+    }, &#x27;number&#x27;],
+    &#x27;+&#x27;: [5, function(left, right, ctx) {
+        return left.number(ctx) + right.number(ctx);
+    }, &#x27;number&#x27;],
+    &#x27;-&#x27;: [5, function(left, right, ctx) {
+        return left.number(ctx) - right.number(ctx);
+    }, &#x27;number&#x27;],
+    &#x27;&lt;&#x27;: [4, function(left, right, ctx) {
+        return BinaryExpr.compare(&#x27;&lt;&#x27;,
+                    function(a, b) { return a &lt; b }, left, right, ctx);
+    }, &#x27;boolean&#x27;],
+    &#x27;&gt;&#x27;: [4, function(left, right, ctx) {
+        return BinaryExpr.compare(&#x27;&gt;&#x27;,
+                    function(a, b) { return a &gt; b }, left, right, ctx);
+    }, &#x27;boolean&#x27;],
+    &#x27;&lt;=&#x27;: [4, function(left, right, ctx) {
+        return BinaryExpr.compare(&#x27;&lt;=&#x27;,
+                    function(a, b) { return a &lt;= b }, left, right, ctx);
+    }, &#x27;boolean&#x27;],
+    &#x27;&gt;=&#x27;: [4, function(left, right, ctx) {
+        return BinaryExpr.compare(&#x27;&gt;=&#x27;,
+                    function(a, b) { return a &gt;= b }, left, right, ctx);
+    }, &#x27;boolean&#x27;],
+    &#x27;=&#x27;: [3, function(left, right, ctx) {
+        return BinaryExpr.compare(&#x27;=&#x27;,
+                    function(a, b) { return a == b }, left, right, ctx);
+    }, &#x27;boolean&#x27;],
+    &#x27;!=&#x27;: [3, function(left, right, ctx) {
+        return BinaryExpr.compare(&#x27;!=&#x27;,
+                    function(a, b) { return a != b }, left, right, ctx);
+    }, &#x27;boolean&#x27;],
+    &#x27;and&#x27;: [2, function(left, right, ctx) {
+        return left.bool(ctx) &amp;&amp; right.bool(ctx);
+    }, &#x27;boolean&#x27;],
+    &#x27;or&#x27;: [1, function(left, right, ctx) {
+        return left.bool(ctx) || right.bool(ctx);
+    }, &#x27;boolean&#x27;]
+};
+
+
+BinaryExpr.parse = function(lexer) {
+    var op, precedence, info, expr, stack = [], index = lexer.index;
+
+    while (true) {
+
+        if (lexer.empty()) {
+            throw Error(&#x27;missing right expression&#x27;);
+        }
+        expr = UnaryExpr.parse(lexer);
+
+        op = lexer.next();
+        if (!op) {
+            break;
+        }
+
+        info = this.ops[op];
+        precedence = info &amp;&amp; info[0];
+        if (!precedence) {
+            lexer.back();
+            break;
+        }
+
+        while (stack.length &amp;&amp; precedence &lt;= this.ops[stack[stack.length-1]][0]) {
+            expr = new BinaryExpr(stack.pop(), stack.pop(), expr);
+        }
+
+        stack.push(expr, op);
+    }
+
+    while (stack.length) {
+        expr = new BinaryExpr(stack.pop(), stack.pop(), expr);
+    }
+
+    return expr;
+};
+
+BinaryExpr.prototype = new BaseExpr();
+
+BinaryExpr.prototype.evaluate = function(ctx) {
+    return BinaryExpr.ops[this.op][1](this.left, this.right, ctx);
+};
+
+BinaryExpr.prototype.show = function(indent) {
+    indent = indent || &#x27;&#x27;;
+    var t = &#x27;&#x27;;
+    t += indent + &#x27;binary: &#x27; + this.op + &#x27;\n&#x27;;
+    indent += &#x27;    &#x27;;
+    t += this.left.show(indent);
+    t += this.right.show(indent);
+    return t;
+};
+
+
+/**
+ * class: UnaryExpr
+ */
+if (!window.UnaryExpr &amp;&amp; window.defaultConfig)
+    window.UnaryExpr = null;
+
+UnaryExpr = function(op, expr) {
+    this.op = op;
+    this.expr = expr;
+
+    this.needContextPosition = expr.needContextPosition;
+    this.needContextNode = expr.needContextNode;
+};
+
+UnaryExpr.ops = { &#x27;-&#x27;: 1 };
+
+UnaryExpr.parse = function(lexer) {
+    var token;
+    if (this.ops[lexer.peek()])
+        return new UnaryExpr(lexer.next(), UnaryExpr.parse(lexer));
+    else
+        return UnionExpr.parse(lexer);
+};
+
+UnaryExpr.prototype = new BaseExpr();
+
+UnaryExpr.prototype.datatype = &#x27;number&#x27;;
+
+UnaryExpr.prototype.evaluate = function(ctx) {
+    return - this.expr.number(ctx);
+};
+
+UnaryExpr.prototype.show = function(indent) {
+    indent = indent || &#x27;&#x27;;
+    var t = &#x27;&#x27;;
+    t += indent + &#x27;unary: &#x27; + this.op + &#x27;\n&#x27;;
+    indent += &#x27;    &#x27;;
+    t += this.expr.show(indent);
+    return t;
+};
+
+
+/**
+ * class: UnionExpr
+ */
+if (!window.UnionExpr &amp;&amp; window.defaultConfig)
+    window.UnionExpr = null;
+
+UnionExpr = function() {
+    this.paths = [];
+};
+
+UnionExpr.ops = { &#x27;|&#x27;: 1 };
+
+
+UnionExpr.parse = function(lexer) {
+    var union, expr;
+
+    expr = PathExpr.parse(lexer);
+    if (!this.ops[lexer.peek()])
+        return expr;
+
+    union = new UnionExpr();
+    union.path(expr);
+
+    while (true) {
+        if (!this.ops[lexer.next()]) break;
+        if (lexer.empty()) {
+            throw Error(&#x27;missing next union location path&#x27;);
+        }
+        union.path(PathExpr.parse(lexer));
+    }
+
+
+
+    lexer.back();
+    return union;
+};
+
+UnionExpr.prototype = new BaseExpr();
+
+UnionExpr.prototype.datatype = &#x27;nodeset&#x27;;
+
+UnionExpr.prototype.evaluate = function(ctx) {
+    var paths = this.paths;
+    var nodeset = new NodeSet();
+    for (var i = 0, l = paths.length; i &lt; l; i ++) {
+        var exrs = paths[i].evaluate(ctx);
+        if (!exrs.isNodeSet) throw Error(&#x27;PathExpr must be nodeset&#x27;);
+        nodeset.merge(exrs);
+    }
+    return nodeset;
+};
+
+UnionExpr.prototype.path = function(path) {
+    this.paths.push(path);
+
+    if (path.needContextPosition) {
+        this.needContextPosition = true;
+    }
+    if (path.needContextNode) {
+        this.needContextNode = true;
+    }
+}
+UnionExpr.prototype.show = function(indent) {
+    indent = indent || &#x27;&#x27;;
+    var t = &#x27;&#x27;;
+    t += indent + &#x27;union:&#x27; + &#x27;\n&#x27;;
+    indent += &#x27;    &#x27;;
+    for (var i = 0; i &lt; this.paths.length; i ++) {
+        t += this.paths[i].show(indent);
+    }
+    return t;
+};
+
+
+/**
+ * class: PathExpr
+ */
+if (!window.PathExpr &amp;&amp; window.defaultConfig)
+    window.PathExpr = null;
+
+PathExpr = function(filter) {
+    this.filter = filter;
+    this.steps = [];
+
+    this.datatype = filter.datatype;
+
+    this.needContextPosition = filter.needContextPosition;
+    this.needContextNode = filter.needContextNode;
+};
+
+PathExpr.ops = { &#x27;//&#x27;: 1, &#x27;/&#x27;: 1 };
+
+PathExpr.parse = function(lexer) {
+    var op, expr, path, token;
+
+    if (this.ops[lexer.peek()]) {
+        op = lexer.next();
+        token = lexer.peek();
+
+        if (op == &#x27;/&#x27; &amp;&amp; (lexer.empty() || 
+                (token != &#x27;.&#x27; &amp;&amp; token != &#x27;..&#x27; &amp;&amp; token != &#x27;@&#x27; &amp;&amp; token != &#x27;*&#x27; &amp;&amp; 
+                !token.match(/(?![0-9])[\w]/)))) { 
+            return FilterExpr.root();
+        }
+
+        path = new PathExpr(FilterExpr.root()); // RootExpr
+
+        if (lexer.empty()) {
+            throw Error(&#x27;missing next location step&#x27;);
+        }
+        expr = Step.parse(lexer);
+        path.step(op, expr);
+    }
+    else {
+        expr = FilterExpr.parse(lexer);
+        if (!expr) {
+            expr = Step.parse(lexer);
+            path = new PathExpr(FilterExpr.context());
+            path.step(&#x27;/&#x27;, expr);
+        }
+        else if (!this.ops[lexer.peek()])
+            return expr;
+        else
+            path = new PathExpr(expr);
+    }
+
+    while (true) {
+        if (!this.ops[lexer.peek()]) break;
+        op = lexer.next();
+        if (lexer.empty()) {
+            throw Error(&#x27;missing next location step&#x27;);
+        }
+        path.step(op, Step.parse(lexer));
+    }
+
+    return path;
+};
+
+PathExpr.prototype = new BaseExpr();
+
+PathExpr.prototype.evaluate = function(ctx) {
+    var nodeset = this.filter.evaluate(ctx);
+    if (!nodeset.isNodeSet) throw Exception(&#x27;Filter nodeset must be nodeset type&#x27;);
+
+    var steps = this.steps;
+
+    for (var i = 0, l0 = steps.length; i &lt; l0 &amp;&amp; nodeset.length; i ++) {
+        var step = steps[i][1];
+        var reverse = step.reverse;
+        var iter = nodeset.iterator(reverse);
+        var prevNodeset = nodeset;
+        nodeset = null;
+        var node, next;
+        if (!step.needContextPosition &amp;&amp; step.axis == &#x27;following&#x27;) {
+            for (node = iter(); next = iter(); node = next) {
+
+                // Safari 2 node.contains problem
+                if (uai.applewebkit4) {
+                    var contains = false;
+                    var ancestor = next;
+                    do {
+                        if (ancestor == node) {
+                            contains = true;
+                            break;
+                        }
+                    } while (ancestor = ancestor.parentNode);
+                    if (!contains) break;
+                }
+                else {
+                    try { if (!node.contains(next)) break }
+                    catch(e) { if (!(next.compareDocumentPosition(node) &amp; 8)) break }
+                }
+            }
+            nodeset = step.evaluate(new Ctx(node));
+        }
+        else if (!step.needContextPosition &amp;&amp; step.axis == &#x27;preceding&#x27;) {
+            node = iter();
+            nodeset = step.evaluate(new Ctx(node));
+        }
+        else {
+            node = iter();
+            var j = 0;
+            nodeset = step.evaluate(new Ctx(node), false, prevNodeset, j);
+            while (node = iter()) {
+                j ++;
+                nodeset.merge(step.evaluate(new Ctx(node), false, prevNodeset, j));
+            }
+        }
+    }
+
+    return nodeset;
+};
+
+PathExpr.prototype.step = function(op, step) {
+    step.op = op;
+    this.steps.push([op, step]);
+
+    this.quickAttr = false;
+
+    if (this.steps.length == 1) {
+        if (op == &#x27;/&#x27; &amp;&amp; step.axis == &#x27;attribute&#x27;) {
+            var test = step.test;
+            if (!test.notOnlyElement &amp;&amp; test.name != &#x27;*&#x27;) {
+                this.quickAttr = true;
+                this.attrName = test.name;
+            }
+        }
+    }
+};
+
+PathExpr.prototype.show = function(indent) {
+    indent = indent || &#x27;&#x27;;
+    var t = &#x27;&#x27;;
+    t += indent + &#x27;path:&#x27; + &#x27;\n&#x27;;
+    indent += &#x27;    &#x27;;
+    t += indent + &#x27;filter:&#x27; + &#x27;\n&#x27;;
+    t += this.filter.show(indent + &#x27;    &#x27;);
+    if (this.steps.length) {
+        t += indent + &#x27;steps:&#x27; + &#x27;\n&#x27;;
+        indent += &#x27;    &#x27;;
+        for (var i = 0; i &lt; this.steps.length; i ++) {
+            var step = this.steps[i];
+            t += indent + &#x27;operator: &#x27; + step[0] + &#x27;\n&#x27;;
+            t += step[1].show(indent);
+        }
+    }
+    return t;
+};
+
+
+/**
+ * class: FilterExpr
+ */
+if (!window.FilterExpr &amp;&amp; window.defaultConfig)
+    window.FilterExpr = null;
+
+FilterExpr = function(primary) {
+    this.primary = primary;
+    this.predicates = [];
+
+    this.datatype = primary.datatype;
+
+    this.needContextPosition = primary.needContextPosition;
+
+    this.needContextNode = primary.needContextNode;
+};
+
+FilterExpr.parse = function(lexer) {
+    var expr, filter, token, ch;
+
+    token = lexer.peek();
+    ch = token.charAt(0);
+
+    switch (ch) {
+        case &#x27;$&#x27;:
+            expr = VariableReference.parse(lexer);
+            break;
+
+        case &#x27;(&#x27;:
+            lexer.next();
+            expr = BinaryExpr.parse(lexer);
+            if (lexer.empty()) {
+                throw Error(&#x27;unclosed &quot;(&quot;&#x27;);
+            }
+            if (lexer.next() != &#x27;)&#x27;) {
+                lexer.back();
+                throw Error(&#x27;bad token: &#x27; + lexer.next());
+            }
+            break;
+
+        case &#x27;&quot;&#x27;:
+        case &quot;&#x27;&quot;:
+            expr = Literal.parse(lexer);
+            break;
+
+        default:
+            if (!isNaN(+token)) {
+                expr = Number.parse(lexer);
+            }
+
+            else if (NodeType.types[token]) {
+                return null;
+            }
+
+            else if (ch.match(/(?![0-9])[\w]/) &amp;&amp; lexer.peek(1) == &#x27;(&#x27;) {
+                expr = FunctionCall.parse(lexer);
+            }
+            else {
+                return null;
+            }
+            break;
+    }
+
+    if (lexer.peek() != &#x27;[&#x27;) return expr;
+
+    filter = new FilterExpr(expr);
+
+    BaseExprHasPredicates.parsePredicates(lexer, filter);
+
+    return filter;
+};
+
+FilterExpr.root = function() {
+    return new FunctionCall(&#x27;root-node&#x27;);
+};
+FilterExpr.context = function() {
+    return new FunctionCall(&#x27;context-node&#x27;);
+};
+
+FilterExpr.prototype = new BaseExprHasPredicates();
+
+FilterExpr.prototype.evaluate = function(ctx) {
+    var nodeset = this.primary.evaluate(ctx);
+    if(!nodeset.isNodeSet) {
+        if (this.predicates.length)
+            throw Error(
+                &#x27;Primary result must be nodeset type &#x27; +
+                &#x27;if filter have predicate expression&#x27;);
+        return nodeset;
+    }
+
+    return  this.evaluatePredicates(nodeset);
+};
+
+FilterExpr.prototype.predicate = function(predicate) {
+    this.predicates.push(predicate);
+};
+
+FilterExpr.prototype.show = function(indent) {
+    indent = indent || &#x27;&#x27;;
+    var t = &#x27;&#x27;;
+    t += indent + &#x27;filter: &#x27; + &#x27;\n&#x27;;
+    indent += &#x27;    &#x27;;
+    t += this.primary.show(indent);
+    if (this.predicates.length) {
+        t += indent + &#x27;predicates: &#x27; + &#x27;\n&#x27;;
+        indent += &#x27;    &#x27;;
+        for (var i = 0; i &lt; this.predicates.length; i ++) {
+            t += this.predicates[i].show(indent);
+        }
+    }
+    return t;
+};
+
+
+if (!window.NodeUtil &amp;&amp; window.defaultConfig)
+    window.NodeUtil = null;
+
+NodeUtil = {
+    to: function(valueType, node) {
+        var type = node.nodeType;
+/*@cc_on
+        if (type == 1 &amp;&amp; node.nodeName.toLowerCase() == &#x27;title&#x27;) {
+            t = node.text;
+        }
+        else
+@*/
+        if (type == 9 || type == 1) {
+            if (type == 9) {
+                node =  node.documentElement;
+            }
+            else {
+                node = node.firstChild;
+            }
+            for (var t = &#x27;&#x27;, stack = [], i = 0; node;) {
+                do {
+                    if (node.nodeType != 1) {
+                        t += node.nodeValue;
+                    }
+/*@cc_on
+                    else if (node.nodeName.toLowerCase() == &#x27;title&#x27;) {
+                        t += node.text;
+                    }
+@*/
+                    stack[i++] = node; // push
+                } while (node = node.firstChild);
+                while (i &amp;&amp; !(node = stack[--i].nextSibling)) {}
+            }
+        }
+        else {
+            var t = node.nodeValue;
+        }
+        switch (valueType) {
+            case &#x27;number&#x27;:
+                return + t;
+            case &#x27;boolean&#x27;:
+                return !! t;
+            default:
+                return t;
+        }
+    },
+    attrPropMap: {
+        name: &#x27;name&#x27;,
+        &#x27;class&#x27;: &#x27;className&#x27;,
+        dir: &#x27;dir&#x27;,
+        id: &#x27;id&#x27;,
+        name: &#x27;name&#x27;,
+        title: &#x27;title&#x27;
+    },
+    attrMatch: function(node, attrName, attrValue) {
+/*@cc_on @if (@_jscript)
+        var propName = NodeUtil.attrPropMap[attrName];
+        if (!attrName ||
+            attrValue == null &amp;&amp; (
+                propName &amp;&amp; node[propName] ||
+                !propName &amp;&amp; node.getAttribute &amp;&amp; node.getAttribute(attrName)
+            ) ||
+            attrValue != null &amp;&amp; (
+                propName &amp;&amp; node[propName] == attrValue ||
+                !propName &amp;&amp; node.getAttribute &amp;&amp; node.getAttribute(attrName) == attrValue
+            )) {
+@else @*/
+        if (!attrName ||
+            attrValue == null &amp;&amp; node.hasAttribute &amp;&amp; node.hasAttribute(attrName) ||
+            attrValue != null &amp;&amp; node.getAttribute &amp;&amp; node.getAttribute(attrName) == attrValue) {
+/*@end @*/
+            return true;
+        }
+        else {
+            return false;
+        }
+    },
+    getDescendantNodes: function(test, node, nodeset, attrName, attrValue, prevNodeset, prevIndex) {
+        if (prevNodeset) {
+            prevNodeset.delDescendant(node, prevIndex);
+        }
+/*@cc_on
+        if (!test.notOnlyElement || test.type == 8 || (attrName &amp;&amp; test.type == 0)) {
+
+            var all = node.all;
+            if (!all) {
+                return nodeset;
+            }
+
+            var name = test.name;
+            if (test.type == 8) name = &#x27;!&#x27;;
+            else if (test.type == 0) name = &#x27;*&#x27;;
+
+            if (name != &#x27;*&#x27;) {
+                all = all.tags(name);
+                if (!all) {
+                    return nodeset;
+                }
+            }
+
+            if (attrName) {
+                var result = []
+                var i = 0;
+                if (attrValue != null &amp;&amp; (attrName == &#x27;id&#x27; || attrName == &#x27;name&#x27;)) {
+                    all = all[attrValue];
+                    if (!all) {
+                        return nodeset;
+                    }
+                    if (!all.length) {
+                        all = [all];
+                    }
+                }
+    
+                while (node = all[i++]) {
+                    if (NodeUtil.attrMatch(node, attrName, attrValue)) result.push(node);
+                }
+
+                all = result;
+            }
+
+            var i = 0;
+            while (node = all[i++]) {
+                if (name != &#x27;*&#x27; || node.tagName != &#x27;!&#x27;) {
+                    nodeset.push(node);
+                }
+            }
+
+            return nodeset;
+        }
+
+        (function (parent) {
+            var g = arguments.callee;
+            var node = parent.firstChild;
+            if (node) {
+                for (; node; node = node.nextSibling) {
+                    if (NodeUtil.attrMatch(node, attrName, attrValue)) {
+                        if (test.match(node)) nodeset.push(node);
+                    }
+                    g(node);
+                }
+            }
+        })(node);
+
+        return nodeset;
+@*/
+        if (attrValue &amp;&amp; attrName == &#x27;id&#x27; &amp;&amp; node.getElementById) {
+            node = node.getElementById(attrValue);
+            if (node &amp;&amp; test.match(node)) {
+                nodeset.push(node);
+            }
+        }
+        else if (attrValue &amp;&amp; attrName == &#x27;name&#x27; &amp;&amp; node.getElementsByName) {
+            var nodes = node.getElementsByName(attrValue);
+            for (var i = 0, l = nodes.length; i &lt; l; i ++) {
+                node = nodes[i];
+                if (uai.opera ? (node.name == attrValue &amp;&amp; test.match(node)) : test.match(node)) {
+                    nodeset.push(node);
+                }
+            }
+        }
+        else if (attrValue &amp;&amp; attrName == &#x27;class&#x27; &amp;&amp; node.getElementsByClassName) {
+            var nodes = node.getElementsByClassName(attrValue);
+            for (var i = 0, l = nodes.length; i &lt; l; i ++) {
+                node = nodes[i];
+                if (node.className == attrValue &amp;&amp; test.match(node)) {
+                    nodeset.push(node);
+                }
+            }
+        }
+        else if (test.notOnlyElement) {
+            (function (parent) {
+                var f = arguments.callee;
+                for (var node = parent.firstChild; node; node = node.nextSibling) {
+                    if (NodeUtil.attrMatch(node, attrName, attrValue)) {
+                        if (test.match(node.nodeType)) nodeset.push(node);
+                    }
+                    f(node);
+                }
+            })(node);
+        }
+        else {
+            var name = test.name;
+            if (node.getElementsByTagName) {
+                var nodes = node.getElementsByTagName(name);
+                if (nodes) {
+                    var i = 0;
+                    while (node = nodes[i++]) {
+                        if (NodeUtil.attrMatch(node, attrName, attrValue)) nodeset.push(node);
+                    }
+                }
+            }
+        }
+        return nodeset;
+    },
+
+    getChildNodes: function(test, node, nodeset, attrName, attrValue) {
+
+/*@cc_on
+        var children;
+
+        if ((!test.notOnlyElement || test.type == 8 || (attrName &amp;&amp; test.type == 0)) &amp;&amp; (children = node.children)) {
+            var name, elm;
+
+            name = test.name;
+            if (test.type == 8) name = &#x27;!&#x27;;
+            else if (test.type == 0) name = &#x27;*&#x27;;
+
+            if (name != &#x27;*&#x27;) {
+                children = children.tags(name);
+                if (!children) {
+                    return nodeset;
+                }
+            }
+
+            if (attrName) {
+                var result = []
+                var i = 0;
+                if (attrName == &#x27;id&#x27; || attrName == &#x27;name&#x27;) {
+                    children = children[attrValue];
+    
+                    if (!children) {
+                        return nodeset;
+                    }
+    
+                    if (!children.length) {
+                        children = [children];
+                    }
+                }
+    
+                while (node = children[i++]) {
+                    if (NodeUtil.attrMatch(node, attrName, attrValue)) result.push(node);
+                }
+                children = result;
+            }
+
+            var i = 0;
+            while (node = children[i++]) {
+                if (name != &#x27;*&#x27; || node.tagName != &#x27;!&#x27;) {
+                    nodeset.push(node);
+                }
+            }
+
+            return nodeset;
+        }
+
+        for (var i = 0, node = node.firstChild; node; i++, node = node.nextSibling) {
+            if (NodeUtil.attrMatch(node, attrName, attrValue)) {
+                if (test.match(node)) nodeset.push(node);
+            }
+        }
+
+        return nodeset;
+@*/
+        for (var node = node.firstChild; node; node = node.nextSibling) {
+            if (NodeUtil.attrMatch(node, attrName, attrValue)) {
+                if (test.match(node)) nodeset.push(node);
+            }
+        }
+        return nodeset;
+    }
+};
+
+/*@cc_on
+var AttributeWrapper = function(node, parent, sourceIndex) {
+    this.node = node;
+    this.nodeType = 2;
+    this.nodeValue = node.nodeValue;
+    this.nodeName = node.nodeName;
+    this.parentNode = parent;
+    this.ownerElement = parent;
+    this.parentSourceIndex = sourceIndex;
+};
+
+@*/
+
+
+/**
+ * class: Step
+ */
+if (!window.Step &amp;&amp; window.defaultConfig)
+    window.Step = null;
+
+Step = function(axis, test) {
+    // TODO check arguments and throw axis error
+    this.axis = axis;
+    this.reverse = Step.axises[axis][0];
+    this.func = Step.axises[axis][1];
+    this.test = test;
+    this.predicates = [];
+    this._quickAttr = Step.axises[axis][2]
+};
+
+Step.axises = {
+
+    ancestor: [true, function(test, node, nodeset, _, __, prevNodeset, prevIndex) {
+        while (node = node.parentNode) {
+            if (prevNodeset &amp;&amp; node.nodeType == 1) {
+                prevNodeset.reserveDelByNode(node, prevIndex, true);
+            }
+            if (test.match(node)) nodeset.unshift(node);
+        }
+        return nodeset;
+    }],
+
+    &#x27;ancestor-or-self&#x27;: [true, function(test, node, nodeset, _, __, prevNodeset, prevIndex) {
+        do {
+            if (prevNodeset &amp;&amp; node.nodeType == 1) {
+                prevNodeset.reserveDelByNode(node, prevIndex, true);
+            }
+            if (test.match(node)) nodeset.unshift(node);
+        } while (node = node.parentNode)
+        return nodeset;
+    }],
+
+    attribute: [false, function(test, node, nodeset) {
+        var attrs = node.attributes;
+        if (attrs) {
+/*@cc_on
+            var sourceIndex = node.sourceIndex;
+@*/
+            if ((test.notOnlyElement &amp;&amp; test.type == 0) || test.name == &#x27;*&#x27;) {
+                for (var i = 0, l = attrs.length; i &lt; l; i ++) {
+                    var attr = attrs[i];
+/*@cc_on @if (@_jscript)
+                    if (attr.nodeValue) {
+                        nodeset.push(new AttributeWrapper(attr, node, sourceIndex));
+                    }
+@else @*/
+                    nodeset.push(attr);
+/*@end @*/
+                }
+            }
+            else {
+                var attr = attrs.getNamedItem(test.name)
+                
+/*@cc_on @if (@_jscript)
+                if (attr &amp;&amp; attr.nodeValue) {
+                    attr = new AttributeWrapper(attr, node, sourceIndex);;
+@else @*/
+                if (attr) {
+/*@end @*/
+                    nodeset.push(attr);
+                }
+            }
+        }
+        return nodeset;
+    }],
+
+    child: [false, NodeUtil.getChildNodes, true],
+
+    descendant: [false, NodeUtil.getDescendantNodes, true],
+
+    &#x27;descendant-or-self&#x27;: [false, function(test, node, nodeset, attrName, attrValue, prevNodeset, prevIndex) {
+        if (NodeUtil.attrMatch(node, attrName, attrValue)) {
+            if (test.match(node)) nodeset.push(node);
+        }
+        return NodeUtil.getDescendantNodes(test, node, nodeset, attrName, attrValue, prevNodeset, prevIndex);
+    }, true],
+
+    following: [false, function(test, node, nodeset, attrName, attrValue) {
+        do {
+            var child = node;
+            while (child = child.nextSibling) {
+                if (NodeUtil.attrMatch(child, attrName, attrValue)) {
+                    if (test.match(child)) nodeset.push(child);
+                }
+                nodeset = NodeUtil.getDescendantNodes(test, child, nodeset, attrName, attrValue);
+            }
+        } while (node = node.parentNode);
+        return nodeset;
+    }, true],
+
+    &#x27;following-sibling&#x27;: [false, function(test, node, nodeset, _, __, prevNodeset, prevIndex) {
+        while (node = node.nextSibling) {
+
+            if (prevNodeset &amp;&amp; node.nodeType == 1) {
+                prevNodeset.reserveDelByNode(node, prevIndex);
+            }
+
+            if (test.match(node)) {
+                nodeset.push(node);
+            }
+        }
+        return nodeset;
+    }],
+
+    namespace: [false, function(test, node, nodeset) {
+        // not implemented
+        return nodeset;
+    }],
+
+    parent: [false, function(test, node, nodeset) {
+        if (node.nodeType == 9) {
+            return nodeset;
+        }
+        if (node.nodeType == 2) {
+            nodeset.push(node.ownerElement);
+            return nodeset;
+        }
+        var node = node.parentNode;
+        if (test.match(node)) nodeset.push(node);
+        return nodeset;
+    }],
+
+    preceding: [true, function(test, node, nodeset, attrName, attrValue) {
+        var parents = [];
+        do {
+            parents.unshift(node);
+        } while (node = node.parentNode);
+
+        for (var i = 1, l0 = parents.length; i &lt; l0; i ++) {
+            var siblings = [];
+            node = parents[i];
+            while (node = node.previousSibling) {
+                siblings.unshift(node);
+            }
+
+            for (var j = 0, l1 = siblings.length; j &lt; l1; j ++) {
+                node = siblings[j];
+                if (NodeUtil.attrMatch(node, attrName, attrValue)) {
+                    if (test.match(node)) nodeset.push(node);
+                }
+                nodeset = NodeUtil.getDescendantNodes(test, node, nodeset, attrName, attrValue);
+            }
+        }
+        return nodeset;
+    }, true],
+
+    &#x27;preceding-sibling&#x27;: [true, function(test, node, nodeset, _, __, prevNodeset, prevIndex) {
+        while (node = node.previousSibling) {
+
+            if (prevNodeset &amp;&amp; node.nodeType == 1) {
+                prevNodeset.reserveDelByNode(node, prevIndex, true);
+            }
+
+            if (test.match(node)) {
+                nodeset.unshift(node)
+            }
+        }
+        return nodeset;
+    }],
+
+    self: [false, function(test, node, nodeset) {
+        if (test.match(node)) nodeset.push(node);
+        return nodeset;
+    }]
+};
+
+Step.parse = function(lexer) {
+    var axis, test, step, token;
+
+    if (lexer.peek() == &#x27;.&#x27;) {
+        step = this.self();
+        lexer.next();
+    }
+    else if (lexer.peek() == &#x27;..&#x27;) {
+        step = this.parent();
+        lexer.next();
+    }
+    else {
+        if (lexer.peek() == &#x27;@&#x27;) {
+            axis = &#x27;attribute&#x27;;
+            lexer.next();
+            if (lexer.empty()) {
+                throw Error(&#x27;missing attribute name&#x27;);
+            }
+        }
+        else {
+            if (lexer.peek(1) == &#x27;::&#x27;) {
+                
+                if (!lexer.peek().charAt(0).match(/(?![0-9])[\w]/)) {
+                    throw Error(&#x27;bad token: &#x27; + lexer.next());
+                }
+        
+                axis = lexer.next();
+                lexer.next();
+
+                if (!this.axises[axis]) {
+                    throw Error(&#x27;invalid axis: &#x27; + axis);
+                }
+                if (lexer.empty()) {
+                    throw Error(&#x27;missing node name&#x27;);
+                }
+            }
+            else {
+                axis = &#x27;child&#x27;;
+            }
+        }
+    
+        token = lexer.peek();
+        if (!token.charAt(0).match(/(?![0-9])[\w]/)) {
+            if (token == &#x27;*&#x27;) {
+                test = NameTest.parse(lexer)
+            }
+            else {
+                throw Error(&#x27;bad token: &#x27; + lexer.next());
+            }
+        }
+        else {
+            if (lexer.peek(1) == &#x27;(&#x27;) {
+                if (!NodeType.types[token]) {
+                    throw Error(&#x27;invalid node type: &#x27; + token);
+                }
+                test = NodeType.parse(lexer)
+            }
+            else {
+                test = NameTest.parse(lexer);
+            }
+        }
+        step = new Step(axis, test);
+    }
+
+    BaseExprHasPredicates.parsePredicates(lexer, step);
+
+    return step;
+};
+
+Step.self = function() {
+    return new Step(&#x27;self&#x27;, new NodeType(&#x27;node&#x27;));
+};
+
+Step.parent = function() {
+    return new Step(&#x27;parent&#x27;, new NodeType(&#x27;node&#x27;));
+};
+
+Step.prototype = new BaseExprHasPredicates();
+
+Step.prototype.evaluate = function(ctx, special, prevNodeset, prevIndex) {
+    var node = ctx.node;
+    var reverse = false;
+
+    if (!special &amp;&amp; this.op == &#x27;//&#x27;) {
+
+        if (!this.needContextPosition &amp;&amp; this.axis == &#x27;child&#x27;) {
+            if (this.quickAttr) {
+                var attrValue = this.attrValueExpr ? this.attrValueExpr.string(ctx) : null;
+                var nodeset = NodeUtil.getDescendantNodes(this.test, node, new NodeSet(), this.attrName, attrValue, prevNodeset, prevIndex);
+                nodeset = this.evaluatePredicates(nodeset, 1);
+            }
+            else {
+                var nodeset = NodeUtil.getDescendantNodes(this.test, node, new NodeSet(), null, null, prevNodeset, prevIndex);
+                nodeset = this.evaluatePredicates(nodeset);
+            }
+        }
+        else {
+            var step = new Step(&#x27;descendant-or-self&#x27;, new NodeType(&#x27;node&#x27;));
+            var nodes = step.evaluate(ctx, false, prevNodeset, prevIndex).list();
+            var nodeset = null;
+            step.op = &#x27;/&#x27;;
+            for (var i = 0, l = nodes.length; i &lt; l; i ++) {
+                if (!nodeset) {
+                    nodeset = this.evaluate(new Ctx(nodes[i]), true);
+                }
+                else {
+                    nodeset.merge(this.evaluate(new Ctx(nodes[i]), true));
+                }
+            }
+            nodeset = nodeset || new NodeSet();
+        }
+    }
+    else {
+
+        if (this.needContextPosition) {
+            prevNodeset = null;
+            prevIndex = null;
+        }
+
+        if (this.quickAttr) {
+            var attrValue = this.attrValueExpr ? this.attrValueExpr.string(ctx) : null;
+            var nodeset = this.func(this.test, node, new NodeSet(), this.attrName, attrValue, prevNodeset, prevIndex);
+            nodeset = this.evaluatePredicates(nodeset, 1);
+        }
+        else {
+            var nodeset = this.func(this.test, node, new NodeSet(), null, null, prevNodeset, prevIndex);
+            nodeset = this.evaluatePredicates(nodeset);
+        }
+        if (prevNodeset) {
+            prevNodeset.doDel();
+        }
+    }
+    return nodeset;
+};
+
+Step.prototype.predicate = function(predicate) {
+    this.predicates.push(predicate);
+
+    if (predicate.needContextPosition ||
+        predicate.datatype == &#x27;number&#x27;||
+        predicate.datatype == &#x27;void&#x27;) {
+        this.needContextPosition = true;
+    }
+
+    if (this._quickAttr &amp;&amp; this.predicates.length == 1 &amp;&amp; predicate.quickAttr) {
+        var attrName = predicate.attrName;
+/*@cc_on @if (@_jscript)
+        this.attrName = attrName.toLowerCase();
+@else @*/
+        this.attrName = attrName;
+/*@end @*/
+        this.attrValueExpr = predicate.attrValueExpr;
+        this.quickAttr = true;
+    }
+};
+
+Step.prototype.show = function(indent) {
+    indent = indent || &#x27;&#x27;;
+    var t = &#x27;&#x27;;
+    t += indent + &#x27;step: &#x27; + &#x27;\n&#x27;;
+    indent += &#x27;    &#x27;;
+    if (this.axis) t += indent + &#x27;axis: &#x27; + this.axis + &#x27;\n&#x27;;
+    t += this.test.show(indent);
+    if (this.predicates.length) {
+        t += indent + &#x27;predicates: &#x27; + &#x27;\n&#x27;;
+        indent += &#x27;    &#x27;;
+        for (var i = 0; i &lt; this.predicates.length; i ++) {
+            t += this.predicates[i].show(indent);
+        }
+    }
+    return t;
+};
+
+
+
+/**
+ * NodeType
+ */
+if (!window.NodeType &amp;&amp; window.defaultConfig)
+    window.NodeType = null;
+    
+NodeType = function(name, literal) {
+    this.name = name;
+    this.literal = literal;
+
+    switch (name) {
+        case &#x27;comment&#x27;:
+            this.type = 8;
+            break;
+        case &#x27;text&#x27;:
+            this.type = 3;
+            break;
+        case &#x27;processing-instruction&#x27;:
+            this.type = 7;
+            break;
+        case &#x27;node&#x27;:
+            this.type = 0;
+            break;
+    }
+};
+
+NodeType.types = {
+    &#x27;comment&#x27;:1, &#x27;text&#x27;:1, &#x27;processing-instruction&#x27;:1, &#x27;node&#x27;:1
+};
+
+NodeType.parse = function(lexer) {
+    var type, literal, ch;
+    type = lexer.next();
+    lexer.next();
+    if (lexer.empty()) {
+        throw Error(&#x27;bad nodetype&#x27;);
+    }
+    ch = lexer.peek().charAt(0);
+    if (ch == &#x27;&quot;&#x27; || ch == &quot;&#x27;&quot;) {
+        literal = Literal.parse(lexer);
+    }
+    if (lexer.empty()) {
+        throw Error(&#x27;bad nodetype&#x27;);
+    }
+    if (lexer.next() != &#x27;)&#x27;) {
+        lexer.back();
+        throw Error(&#x27;bad token &#x27; + lexer.next());
+    }
+    return new NodeType(type, literal);
+};
+
+NodeType.prototype = new BaseExpr();
+
+NodeType.prototype.notOnlyElement = true;
+
+NodeType.prototype.match = function(node) {
+    return !this.type || this.type == node.nodeType;
+};
+
+NodeType.prototype.show = function(indent) {
+    indent = indent || &#x27;&#x27;;
+    var t = &#x27;&#x27;;
+    t += indent + &#x27;nodetype: &#x27; + this.type + &#x27;\n&#x27;;
+    if (this.literal) {
+        indent += &#x27;    &#x27;;
+        t += this.literal.show(indent);
+    }
+    return t;
+};
+
+
+/**
+ * NodeType
+ */
+if (!window.NameTest &amp;&amp; window.defaultConfig)
+    window.NameTest = null;
+
+NameTest = function(name) {
+    this.name = name.toLowerCase();
+};
+
+NameTest.parse = function(lexer) {
+    if (lexer.peek() != &#x27;*&#x27; &amp;&amp;  lexer.peek(1) == &#x27;:&#x27; &amp;&amp; lexer.peek(2) == &#x27;*&#x27;) {
+        return new NameTest(lexer.next() + lexer.next() + lexer.next());
+    }
+    return new NameTest(lexer.next());
+};
+
+NameTest.prototype = new BaseExpr();
+
+NameTest.prototype.match = function(node) {
+    var type = node.nodeType;
+
+    if (type == 1 || type == 2) {
+        if (this.name == &#x27;*&#x27; || this.name == node.nodeName.toLowerCase()) {
+            return true;
+        }
+    }
+    return false;
+};
+
+NameTest.prototype.show = function(indent) {
+    indent = indent || &#x27;&#x27;;
+    var t = &#x27;&#x27;;
+    t += indent + &#x27;nametest: &#x27; + this.name + &#x27;\n&#x27;;
+    return t;
+};
+
+
+/**
+ * class: VariableRefernce
+ */
+if (!window.VariableReference &amp;&amp; window.defaultConfig)
+    window.VariableReference = null;
+    
+VariableReference = function(name) {
+    this.name = name.substring(1);
+};
+
+
+VariableReference.parse = function(lexer) {
+    var token = lexer.next();
+    if (token.length &lt; 2) {
+        throw Error(&#x27;unnamed variable reference&#x27;);
+    }
+    return new VariableReference(token)
+};
+
+VariableReference.prototype = new BaseExpr();
+
+VariableReference.prototype.datatype = &#x27;void&#x27;;
+
+VariableReference.prototype.show = function(indent) {
+    indent = indent || &#x27;&#x27;;
+    var t = &#x27;&#x27;;
+    t += indent + &#x27;variable: &#x27; + this.name + &#x27;\n&#x27;;
+    return t;
+};
+
+
+/**
+ * class: Literal
+ */
+if (!window.Literal &amp;&amp; window.defaultConfig)
+    window.Literal = null;
+
+Literal = function(text) {
+    this.text = text.substring(1, text.length - 1);
+};
+
+Literal.parse = function(lexer) {
+    var token = lexer.next();
+    if (token.length &lt; 2) {
+        throw Error(&#x27;unclosed literal string&#x27;);
+    }
+    return new Literal(token)
+};
+
+Literal.prototype = new BaseExpr();
+
+Literal.prototype.datatype = &#x27;string&#x27;;
+
+Literal.prototype.evaluate = function(ctx) {
+    return this.text;
+};
+
+Literal.prototype.show = function(indent) {
+    indent = indent || &#x27;&#x27;;
+    var t = &#x27;&#x27;;
+    t += indent + &#x27;literal: &#x27; + this.text + &#x27;\n&#x27;;
+    return t;
+};
+
+
+/**
+ * class: Number
+ */
+if (!window.Number &amp;&amp; window.defaultConfig)
+    window.Number = null;
+
+Number = function(digit) {
+    this.digit = +digit;
+};
+
+
+Number.parse = function(lexer) {
+    return new Number(lexer.next());
+};
+
+Number.prototype = new BaseExpr();
+
+Number.prototype.datatype = &#x27;number&#x27;;
+
+Number.prototype.evaluate = function(ctx) {
+    return this.digit;
+};
+
+Number.prototype.show = function(indent) {
+    indent = indent || &#x27;&#x27;;
+    var t = &#x27;&#x27;;
+    t += indent + &#x27;number: &#x27; + this.digit + &#x27;\n&#x27;;
+    return t;
+};
+
+
+/**
+ * class: FunctionCall
+ */
+if (!window.FunctionCall &amp;&amp; window.defaultConfig)
+    window.FunctionCall = null;
+
+FunctionCall = function(name) {
+    var info = FunctionCall.funcs[name];
+    this.name = name;
+    this.func = info[0];
+    this.args = [];
+
+    this.datatype = info[1];
+
+    if (info[2]) {
+        this.needContextPosition = true;
+    }
+
+    this.needContextNodeInfo = info[3];
+    this.needContextNode = this.needContextNodeInfo[0]
+};
+
+FunctionCall.funcs = {
+
+    // Original Function
+    &#x27;context-node&#x27;: [function() {
+        if (arguments.length != 0) {
+            throw Error(&#x27;Function context-node expects ()&#x27;);
+        }
+        var ns;
+        ns = new NodeSet();
+        ns.push(this.node);
+        return ns;
+    }, &#x27;nodeset&#x27;, false, [true]],
+
+    // Original Function
+    &#x27;root-node&#x27;: [function() {
+        if (arguments.length != 0) {
+            throw Error(&#x27;Function root-node expects ()&#x27;);
+        }
+        var ns, ctxn;
+        ns = new NodeSet();
+        ctxn = this.node;
+        if (ctxn.nodeType == 9)
+            ns.push(ctxn);
+        else
+            ns.push(ctxn.ownerDocument);
+        return ns;
+    }, &#x27;nodeset&#x27;, false, []],
+
+    last: [function() {
+        if (arguments.length != 0) {
+            throw Error(&#x27;Function last expects ()&#x27;);
+        }
+        return this.last;
+    }, &#x27;number&#x27;, true, []],
+
+    position: [function() {
+        if (arguments.length != 0) {
+            throw Error(&#x27;Function position expects ()&#x27;);
+        }
+        return this.position;
+    }, &#x27;number&#x27;, true, []],
+
+    count: [function(ns) {
+        if (arguments.length != 1 || !(ns = ns.evaluate(this)).isNodeSet) {
+            throw Error(&#x27;Function count expects (nodeset)&#x27;);
+        }
+        return ns.length;
+    }, &#x27;number&#x27;, false, []],
+
+    id: [function(s) {
+        var ids, ns, i, id, elm, ctxn, doc;
+        if (arguments.length != 1) {
+            throw Error(&#x27;Function id expects (object)&#x27;);
+        }
+        ctxn = this.node;
+        if (ctxn.nodeType == 9)
+            doc = ctxn;
+        else
+            doc = ctxn.ownerDocument;
+/*@cc_on
+        all = doc.all;
+@*/
+        s = s.string(this);
+        ids = s.split(/\s+/);
+        ns = new NodeSet();
+        for (i = 0, l = ids.length; i &lt; l; i ++) {
+            id = ids[i];
+
+/*@cc_on @if (@_jscript)
+            elm = all[id];
+            if (elm) {
+                if (elm.length) {
+                    var elms = elm;
+                    for (var j = 0, l0 = elms.length; j &lt; l0; j ++) {
+                        var elem = elms[j];
+                        if (id == elem.id) {
+                            ns.push(elem);
+                            break;
+                        }
+                    }
+                }
+                else if (id == elm.id) {
+                    ns.push(elm)
+                }
+            }
+@else @*/
+            elm = doc.getElementById(id);
+            if (uai.opera &amp;&amp; elm.id != id) {
+                var elms = doc.getElementsByName(id);
+                for (var j = 0, l0 = elms.length; j &lt; l0; j ++) {
+                    elm = elms[j];
+                    if (elm.id == id) {
+                        ns.push(elm);
+                    }
+                }
+            }
+            else {
+                if (elm) ns.push(elm)
+            }
+/*@end @*/
+
+        }
+        ns.isSorted = false;
+        return ns;
+    }, &#x27;nodeset&#x27;, false, []],
+
+    &#x27;local-name&#x27;: [function(ns) {
+        var nd;
+        switch (arguments.length) {
+            case 0:
+                nd = this.node;
+                break;
+            case 1:
+                if ((ns = ns.evaluate(this)).isNodeSet) {
+                    nd = ns.first();
+                    break;
+                }
+            default:
+                throw Error(&#x27;Function local-name expects (nodeset?)&#x27;);
+                break;
+        }
+        return &#x27;&#x27; + nd.nodeName.toLowerCase();
+    }, &#x27;string&#x27;, false, [true, false]],
+
+    name: [function(ns) {
+        // not implemented
+        return FunctionCall.funcs[&#x27;local-name&#x27;][0].apply(this, arguments);
+    }, &#x27;string&#x27;, false, [true, false]],
+
+    &#x27;namespace-uri&#x27;: [function(ns) {
+        // not implemented
+        return &#x27;&#x27;;
+    }, &#x27;string&#x27;, false, [true, false]],
+
+    string: [function(s) {
+        switch (arguments.length) {
+            case 0:
+                s = NodeUtil.to(&#x27;string&#x27;, this.node);
+                break;
+            case 1:
+                s = s.string(this);
+                break;
+            default:
+                throw Error(&#x27;Function string expects (object?)&#x27;);
+                break;
+        }
+        return s;
+    }, &#x27;string&#x27;, false, [true, false]],
+
+    concat: [function(s1, s2) {
+        if (arguments.length &lt; 2) {
+            throw Error(&#x27;Function concat expects (string, string[, ...])&#x27;);
+        }
+        for (var t = &#x27;&#x27;, i = 0, l = arguments.length; i &lt; l; i ++) {
+            t += arguments[i].string(this);
+        }
+        return t;
+    }, &#x27;string&#x27;, false, []],
+
+    &#x27;starts-with&#x27;: [function(s1, s2) {
+        if (arguments.length != 2) {
+            throw Error(&#x27;Function starts-with expects (string, string)&#x27;);
+        }
+        s1 = s1.string(this);
+        s2 = s2.string(this);
+        return s1.indexOf(s2) == 0;
+    }, &#x27;boolean&#x27;, false, []],
+
+    contains: [function(s1, s2) {
+        if (arguments.length != 2) {
+            throw Error(&#x27;Function contains expects (string, string)&#x27;);
+        }
+        s1 = s1.string(this);
+        s2 = s2.string(this);
+        return s1.indexOf(s2) != -1;
+    }, &#x27;boolean&#x27;, false, []],
+
+    substring: [function(s, n1, n2) {
+        var a1, a2;
+        s = s.string(this);
+        n1 = n1.number(this);
+        switch (arguments.length) {
+            case 2:
+                n2 = s.length - n1 + 1;
+                break;
+            case 3:
+                n2 = n2.number(this);
+                break;
+            default:
+                throw Error(&#x27;Function substring expects (string, string)&#x27;);
+                break;
+        }
+        n1 = Math.round(n1);
+        n2 = Math.round(n2);
+        a1 = n1 - 1;
+        a2 = n1 + n2 - 1;
+        if (a2 == Infinity) {
+            return s.substring(a1 &lt; 0 ? 0 : a1);
+        }
+        else {
+            return s.substring(a1 &lt; 0 ? 0 : a1, a2)
+        }
+    }, &#x27;string&#x27;, false, []],
+
+    &#x27;substring-before&#x27;: [function(s1, s2) {
+        var n;
+        if (arguments.length != 2) {
+            throw Error(&#x27;Function substring-before expects (string, string)&#x27;);
+        }
+        s1 = s1.string(this);
+        s2 = s2.string(this);
+        n = s1.indexOf(s2);
+        if (n == -1) return &#x27;&#x27;;
+        return s1.substring(0, n);
+    }, &#x27;string&#x27;, false, []],
+
+    &#x27;substring-after&#x27;: [function(s1, s2) {
+        if (arguments.length != 2) {
+            throw Error(&#x27;Function substring-after expects (string, string)&#x27;);
+        }
+        s1 = s1.string(this);
+        s2 = s2.string(this);
+        var n = s1.indexOf(s2);
+        if (n == -1) return &#x27;&#x27;;
+        return s1.substring(n + s2.length);
+    }, &#x27;string&#x27;, false, []],
+
+    &#x27;string-length&#x27;: [function(s) {
+        switch (arguments.length) {
+            case 0:
+                s = NodeUtil.to(&#x27;string&#x27;, this.node);
+                break;
+            case 1:
+                s = s.string(this);
+                break;
+            default:
+                throw Error(&#x27;Function string-length expects (string?)&#x27;);
+                break;
+        }
+        return s.length;
+    }, &#x27;number&#x27;, false, [true, false]],
+
+    &#x27;normalize-space&#x27;: [function(s) {
+        switch (arguments.length) {
+            case 0:
+                s = NodeUtil.to(&#x27;string&#x27;, this.node);
+                break;
+            case 1:
+                s = s.string(this);
+                break;
+            default:
+                throw Error(&#x27;Function normalize-space expects (string?)&#x27;);
+                break;
+        }
+        return s.replace(/\s+/g, &#x27; &#x27;).replace(/^ /, &#x27;&#x27;).replace(/ $/, &#x27;&#x27;);
+    }, &#x27;string&#x27;, false, [true, false]],
+
+    translate: [function(s1, s2, s3) {
+        if (arguments.length != 3) {
+            throw Error(&#x27;Function translate expects (string, string, string)&#x27;);
+        }
+        s1 = s1.string(this);
+        s2 = s2.string(this);
+        s3 = s3.string(this);
+
+        var map = [];
+        for (var i = 0, l = s2.length; i &lt; l; i ++) {
+            var ch = s2.charAt(i);
+            if (!map[ch]) map[ch] = s3.charAt(i) || &#x27;&#x27;;
+        }
+        for (var t = &#x27;&#x27;, i = 0, l = s1.length; i &lt; l; i ++) {
+            var ch = s1.charAt(i);
+            var replace = map[ch]
+            t += (replace != undefined) ? replace : ch;
+        }
+        return t;
+    }, &#x27;string&#x27;, false, []],
+
+    &#x27;boolean&#x27;: [function(b) {
+        if (arguments.length != 1) {
+            throw Error(&#x27;Function boolean expects (object)&#x27;);
+        }
+        return b.bool(this)
+    }, &#x27;boolean&#x27;, false, []],
+
+    not: [function(b) {
+        if (arguments.length != 1) {
+            throw Error(&#x27;Function not expects (object)&#x27;);
+        }
+        return !b.bool(this)
+    }, &#x27;boolean&#x27;, false, []],
+
+    &#x27;true&#x27;: [function() {
+        if (arguments.length != 0) {
+            throw Error(&#x27;Function true expects ()&#x27;);
+        }
+        return true;
+    }, &#x27;boolean&#x27;, false, []],
+
+    &#x27;false&#x27;: [function() {
+        if (arguments.length != 0) {
+            throw Error(&#x27;Function false expects ()&#x27;);
+        }
+        return false;
+    }, &#x27;boolean&#x27;, false, []],
+
+    lang: [function(s) {
+        // not implemented
+        return false;
+    }, &#x27;boolean&#x27;, false, []],
+
+    number: [function(n) {
+        switch (arguments.length) {
+            case 0:
+                n = NodeUtil.to(&#x27;number&#x27;, this.node);
+                break;
+            case 1:
+                n = n.number(this);
+                break;
+            default:
+                throw Error(&#x27;Function number expects (object?)&#x27;);
+                break;
+        }
+        return n;
+    }, &#x27;number&#x27;, false, [true, false]],
+
+    sum: [function(ns) {
+        var nodes, n, i, l;
+        if (arguments.length != 1 || !(ns = ns.evaluate(this)).isNodeSet) {
+            throw Error(&#x27;Function sum expects (nodeset)&#x27;);
+        }
+        nodes = ns.list();
+        n = 0;
+        for (i = 0, l = nodes.length; i &lt; l; i ++) {
+            n += NodeUtil.to(&#x27;number&#x27;, nodes[i]);
+        }
+        return n;
+    }, &#x27;number&#x27;, false, []],
+
+    floor: [function(n) {
+        if (arguments.length != 1) {
+            throw Error(&#x27;Function floor expects (number)&#x27;);
+        }
+        n = n.number(this);
+        return Math.floor(n);
+    }, &#x27;number&#x27;, false, []],
+
+    ceiling: [function(n) {
+        if (arguments.length != 1) {
+            throw Error(&#x27;Function ceiling expects (number)&#x27;);
+        }
+        n = n.number(this);
+        return Math.ceil(n);
+    }, &#x27;number&#x27;, false, []],
+
+    round: [function(n) {
+        if (arguments.length != 1) {
+            throw Error(&#x27;Function round expects (number)&#x27;);
+        }
+        n = n.number(this);
+        return Math.round(n);
+    }, &#x27;number&#x27;, false, []]
+};
+
+FunctionCall.parse = function(lexer) {
+    var expr, func = new FunctionCall(lexer.next());
+    lexer.next();
+    while (lexer.peek() != &#x27;)&#x27;) {
+        if (lexer.empty()) {
+            throw Error(&#x27;missing function argument list&#x27;);
+        }
+        expr = BinaryExpr.parse(lexer);
+        func.arg(expr);
+        if (lexer.peek() != &#x27;,&#x27;) break;
+        lexer.next();
+    }
+    if (lexer.empty()) {
+        throw Error(&#x27;unclosed function argument list&#x27;);
+    }
+    if (lexer.next() != &#x27;)&#x27;) {
+        lexer.back();
+        throw Error(&#x27;bad token: &#x27; + lexer.next());
+    }
+    return func
+};
+
+FunctionCall.prototype = new BaseExpr();
+
+FunctionCall.prototype.evaluate = function (ctx) {
+    return this.func.apply(ctx, this.args);
+};
+
+FunctionCall.prototype.arg = function(arg) {
+    this.args.push(arg);
+
+    if (arg.needContextPosition) {
+        this.needContextPosition = true;
+    }
+
+    var args = this.args;
+    if (arg.needContextNode) {
+        args.needContexNode = true;
+    }
+    this.needContextNode = args.needContextNode ||
+                            this.needContextNodeInfo[args.length];
+};
+
+FunctionCall.prototype.show = function(indent) {
+    indent = indent || &#x27;&#x27;;
+    var t = &#x27;&#x27;;
+    t += indent + &#x27;function: &#x27; + this.name + &#x27;\n&#x27;;
+    indent += &#x27;    &#x27;;
+
+    if (this.args.length) {
+        t += indent + &#x27;arguments: &#x27; + &#x27;\n&#x27;;
+        indent += &#x27;    &#x27;;
+        for (var i = 0; i &lt; this.args.length; i ++) {
+            t += this.args[i].show(indent);
+        }
+    }
+
+    return t;
+};
+
+
+/*@cc_on @if (@_jscript)
+var NodeWrapper = function(node, sourceIndex, subIndex, attributeName) {
+    this.node = node;
+    this.nodeType = node.nodeType;
+    this.sourceIndex = sourceIndex;
+    this.subIndex = subIndex;
+    this.attributeName = attributeName || &#x27;&#x27;;
+    this.order = String.fromCharCode(sourceIndex) + String.fromCharCode(subIndex) + attributeName;
+};
+
+NodeWrapper.prototype.toString = function() {
+    return this.order;
+};
+@else @*/
+var NodeID = {
+    uuid: 1,
+    get: function(node) {
+        return node.__jsxpath_id__ || (node.__jsxpath_id__ = this.uuid++);
+    }
+};
+/*@end @*/
+
+if (!window.NodeSet &amp;&amp; window.defaultConfig)
+    window.NodeSet = null;
+    
+NodeSet = function() {
+    this.length = 0;
+    this.nodes = [];
+    this.seen = {};
+    this.idIndexMap = null;
+    this.reserveDels = [];
+};
+
+NodeSet.prototype.isNodeSet = true;
+NodeSet.prototype.isSorted = true;
+
+/*@_cc_on
+NodeSet.prototype.shortcut = true;
+@*/
+
+NodeSet.prototype.merge = function(nodeset) {
+    this.isSorted = false;
+    if (nodeset.only) {
+        return this.push(nodeset.only);
+    }
+
+    if (this.only){
+        var only = this.only;
+        delete this.only;
+        this.push(only);
+        this.length --;
+    }
+
+    var nodes = nodeset.nodes;
+    for (var i = 0, l = nodes.length; i &lt; l; i ++) {
+        this._add(nodes[i]);
+    }
+};
+
+NodeSet.prototype.sort = function() {
+    if (this.only) return;
+    if (this.sortOff) return;
+
+    if (!this.isSorted) {
+        this.isSorted = true;
+        this.idIndexMap = null;
+
+/*@cc_on
+        if (this.shortcut) {
+            this.nodes.sort();
+        }
+        else {
+            this.nodes.sort(function(a, b) {
+                var result;
+                result = a.sourceIndex - b.sourceIndex;
+                if (result == 0)
+                    return a.subIndex - a.subIndex;
+                else
+                    return result;
+            });
+        }
+        return;
+@*/
+        var nodes = this.nodes;
+        nodes.sort(function(a, b) {
+            if (a == b) return 0;
+
+            if (a.compareDocumentPosition) {
+                var result = a.compareDocumentPosition(b);
+                if (result &amp; 2) return 1;
+                if (result &amp; 4) return -1;
+                return 0;
+            }
+            else {
+                var node1 = a, node2 = b, ancestor1 = a, ancestor2 = b, deep1 = 0, deep2 = 0;
+
+                while(ancestor1 = ancestor1.parentNode) deep1 ++;
+                while(ancestor2 = ancestor2.parentNode) deep2 ++;
+
+                // same deep
+                if (deep1 &gt; deep2) {
+                    while (deep1-- != deep2) node1 = node1.parentNode;
+                    if (node1 == node2) return 1;
+                }
+                else if (deep2 &gt; deep1) {
+                    while (deep2-- != deep1) node2 = node2.parentNode;
+                    if (node1 == node2) return -1;
+                }
+
+                while ((ancestor1 = node1.parentNode) != (ancestor2 = node2.parentNode)) {
+                    node1 = ancestor1;
+                    node2 = ancestor2;
+                }
+
+                // node1 is node2&#x27;s sibling
+                while (node1 = node1.nextSibling) if (node1 == node2) return -1;
+
+                return 1;
+            }
+        });
+    }
+};
+
+
+/*@cc_on @if (@_jscript)
+NodeSet.prototype.sourceOffset = 1;
+NodeSet.prototype.subOffset = 2;
+NodeSet.prototype.createWrapper = function(node) {
+    var parent, child, attributes, attributesLength, sourceIndex, subIndex, attributeName;
+
+    sourceIndex = node.sourceIndex;
+
+    if (typeof sourceIndex != &#x27;number&#x27;) {
+        type = node.nodeType;
+        switch (type) {
+            case 2:
+                parent = node.parentNode;
+                sourceIndex = node.parentSourceIndex;
+                subIndex = -1;
+                attributeName = node.nodeName;
+                break;
+            case 9:
+                subIndex = -2;
+                sourceIndex = -1;
+                break;
+            default:
+                child = node;
+                subIndex = 0;
+                do {
+                    subIndex ++;
+                    sourceIndex = child.sourceIndex;
+                    if (sourceIndex) {
+                        parent = child;
+                        child = child.lastChild;
+                        if (!child) {
+                            child = parent;
+                            break;
+                        }
+                        subIndex ++;
+                    }
+                } while (child = child.previousSibling);
+                if (!sourceIndex) {
+                    sourceIndex = node.parentNode.sourceIndex;
+                }
+                break;
+        }
+    }
+    else {
+        subIndex = -2;
+    }
+
+    sourceIndex += this.sourceOffset;
+    subIndex += this.subOffset;
+
+    return new NodeWrapper(node, sourceIndex, subIndex, attributeName);
+};
+
+NodeSet.prototype.reserveDelBySourceIndexAndSubIndex = function(sourceIndex, subIndex, offset, reverse) {
+    var map = this.createIdIndexMap();
+    var index;
+    if ((map = map[sourceIndex]) &amp;&amp; (index = map[subIndex])) {
+        if (reverse &amp;&amp; (this.length - offset - 1) &gt; index || !reverse &amp;&amp; offset &lt; index) {
+            var obj = {
+                value: index,
+                order: String.fromCharCode(index),
+                toString: function() { return this.order },
+                valueOf: function() { return this.value }
+            };
+            this.reserveDels.push(obj);
+        }
+    }
+};
+@else @*/
+NodeSet.prototype.reserveDelByNodeID = function(id, offset, reverse) {
+    var map = this.createIdIndexMap();
+    var index;
+    if (index = map[id]) {
+        if (reverse &amp;&amp; (this.length - offset - 1) &gt; index || !reverse &amp;&amp; offset &lt; index) {
+            var obj = {
+                value: index,
+                order: String.fromCharCode(index),
+                toString: function() { return this.order },
+                valueOf: function() { return this.value }
+            };
+            this.reserveDels.push(obj);
+        }
+    }
+};
+/*@end @*/
+
+NodeSet.prototype.reserveDelByNode = function(node, offset, reverse) {
+/*@cc_on @if (@_jscript)
+    node = this.createWrapper(node);
+    this.reserveDelBySourceIndexAndSubIndex(node.sourceIndex, node.subIndex, offset, reverse);
+@else @*/
+    this.reserveDelByNodeID(NodeID.get(node), offset, reverse);
+/*@end @*/
+};
+
+NodeSet.prototype.doDel = function() {
+    if (!this.reserveDels.length) return;
+
+    if (this.length &lt; 0x10000) {
+        var dels = this.reserveDels.sort(function(a, b) { return b - a });
+    }
+    else {
+        var dels = this.reserveDels.sort(function(a, b) { return b - a });
+    }
+    for (var i = 0, l = dels.length; i &lt; l; i ++) {
+        this.del(dels[i]);
+    }
+    this.reserveDels = [];
+    this.idIndexMap = null;
+};
+
+NodeSet.prototype.createIdIndexMap = function() {
+    if (this.idIndexMap) {
+        return this.idIndexMap;
+    }
+    else {
+        var map = this.idIndexMap = {};
+        var nodes = this.nodes;
+        for (var i = 0, l = nodes.length; i &lt; l; i ++) {
+            var node = nodes[i];
+/*@cc_on @if (@_jscript)
+            var sourceIndex = node.sourceIndex;
+            var subIndex = node.subIndex;
+            if (!map[sourceIndex]) map[sourceIndex] = {};
+            map[sourceIndex][subIndex] = i;
+@else @*/
+            var id = NodeID.get(node);
+            map[id] = i;
+/*@end @*/
+        }
+        return map;
+    }
+};
+
+NodeSet.prototype.del = function(index) {
+    this.length --;
+    if (this.only) {
+        delete this.only;
+    }
+    else {  
+        var node = this.nodes.splice(index, 1)[0];
+
+        if (this._first == node) {
+            delete this._first;
+            delete this._firstSourceIndex;
+            delete this._firstSubIndex;
+        }
+
+/*@cc_on @if (@_jscript)
+        delete this.seen[node.sourceIndex][node.subIndex];
+@else @*/
+        delete this.seen[NodeID.get(node)];
+/*@end @*/
+    }
+};
+
+
+NodeSet.prototype.delDescendant = function(elm, offset) {
+    if (this.only) return;
+    var nodeType = elm.nodeType;
+    if (nodeType != 1 &amp;&amp; nodeType != 9) return;
+    if (uai.applewebkit4) return;
+
+    // element || document
+    if (!elm.contains) {
+        if (nodeType == 1) {
+            var _elm = elm;
+            elm = {
+                contains: function(node) {
+                    return node.compareDocumentPosition(_elm) &amp; 8;
+                }
+            };
+        }
+        else {
+            // document
+            elm = {
+                contains: function() {
+                    return true;
+                }
+            };
+        }
+    }
+
+    var nodes = this.nodes;
+    for (var i = offset + 1; i &lt; nodes.length; i ++) {
+
+/*@cc_on @if (@_jscript)
+        if (nodes[i].node.nodeType == 1 &amp;&amp; elm.contains(nodes[i].node)) {
+@else @*/
+        if (elm.contains(nodes[i])) {
+/*@end @*/
+            this.del(i);
+            i --;
+        }
+    }
+};
+
+NodeSet.prototype._add = function(node, reverse) {
+
+/*@cc_on @if (@_jscript)
+
+    var first, firstSourceIndex, firstSubIndex, sourceIndex, subIndex, attributeName;
+
+    sourceIndex = node.sourceIndex;
+    subIndex = node.subIndex;
+    attributeName = node.attributeName;
+    seen = this.seen;
+
+    seen = seen[sourceIndex] || (seen[sourceIndex] = {});
+
+    if (node.nodeType == 2) {
+        seen = seen[subIndex] || (seen[subIndex] = {});
+        if (seen[attributeName]) {
+            return true;
+        }
+        seen[attributeName] = true;
+    }
+    else {
+        if (seen[subIndex]) {
+            return true;
+        }
+        seen[subIndex] = true;
+    }
+
+    if (sourceIndex &gt;= 0x10000 || subIndex &gt;= 0x10000) {
+        this.shortcut = false;
+    }
+
+    // if this._first is undefined and this.nodes is not empty
+    // then first node shortcut is disabled.
+    if (this._first || this.nodes.length == 0) {
+        first = this._first;
+        firstSourceIndex = this._firstSourceIndex;
+        firstSubIndex = this._firstSubIndex;
+        if (!first || firstSourceIndex &gt; sourceIndex || (firstSourceIndex == sourceIndex &amp;&amp; firstSubIndex &gt; subIndex)) {
+            this._first = node;
+            this._firstSourceIndex = sourceIndex;
+            this._firstSubIndex = subIndex
+        }
+    }
+
+@else @*/
+
+    var seen = this.seen;
+    var id = NodeID.get(node);
+    if (seen[id]) return true;
+    seen[id] = true;
+
+/*@end @*/
+
+    this.length++;
+    if (reverse) 
+        this.nodes.unshift(node);
+    else
+        this.nodes.push(node);
+};
+
+
+NodeSet.prototype.unshift = function(node) {
+    if (!this.length) {
+        this.length ++;
+        this.only = node;
+        return
+    }
+    if (this.only){
+        var only = this.only;
+        delete this.only;
+        this.unshift(only);
+        this.length --;
+    }
+/*@cc_on
+    node = this.createWrapper(node);
+@*/
+    return this._add(node, true);
+};
+
+
+NodeSet.prototype.push = function(node) {
+    if (!this.length) {
+        this.length ++;
+        this.only = node;
+        return;
+    }
+    if (this.only) {
+        var only = this.only;
+        delete this.only;
+        this.push(only);
+        this.length --;
+    }
+/*@cc_on
+    node = this.createWrapper(node);
+@*/
+    return this._add(node);
+};
+
+NodeSet.prototype.first = function() {
+    if (this.only) return this.only;
+/*@cc_on
+    if (this._first) return this._first.node;
+    if (this.nodes.length &gt; 1) this.sort();
+    var node = this.nodes[0];
+    return node ? node.node : undefined;
+@*/
+    if (this.nodes.length &gt; 1) this.sort();
+    return this.nodes[0];
+};
+
+NodeSet.prototype.list = function() {
+    if (this.only) return [this.only];
+    this.sort();
+/*@cc_on
+    var i, l, nodes, results;
+    nodes = this.nodes;
+    results = [];
+    for (i = 0, l = nodes.length; i &lt; l; i ++) {
+        results.push(nodes[i].node);
+    }
+    return results;
+@*/
+    return this.nodes;
+};
+
+NodeSet.prototype.string = function() {
+    var node = this.only || this.first();
+    return node ? NodeUtil.to(&#x27;string&#x27;, node) : &#x27;&#x27;;
+};
+
+NodeSet.prototype.bool = function() {
+    return !! (this.length || this.only);
+};
+
+NodeSet.prototype.number = function() {
+    return + this.string();
+};
+
+NodeSet.prototype.iterator = function(reverse) {
+    this.sort();
+    var nodeset = this;
+
+    if (!reverse) {
+        var count = 0;
+        return function() {
+            if (nodeset.only &amp;&amp; count++ == 0) return nodeset.only;
+/*@cc_on @if(@_jscript)
+            var wrapper = nodeset.nodes[count++];
+            if (wrapper) return wrapper.node;
+            return undefined;
+@else @*/
+            return nodeset.nodes[count++];
+/*@end @*/
+        };
+    }
+    else {
+        var count = 0;
+        return function() {
+            var index = nodeset.length - (count++) - 1;
+            if (nodeset.only &amp;&amp; index == 0) return nodeset.only;
+/*@cc_on @if(@_jscript)
+            var wrapper = nodeset.nodes[index];
+            if (wrapper) return wrapper.node;
+            return undefined;
+@else @*/
+            return nodeset.nodes[index];
+/*@end @*/
+        };
+    }
+};
+
+
+var install = function(win) {
+
+    win = win || this;
+
+    win.XPathExpression = function(expr) {
+        if (!expr.length) {
+            throw Error(&#x27;no expression&#x27;);
+        }
+        var lexer = this.lexer = Lexer(expr);
+        if (lexer.empty()) {
+            throw Error(&#x27;no expression&#x27;);
+        }
+        this.expr = BinaryExpr.parse(lexer);
+        if (!lexer.empty()) {
+            throw Error(&#x27;bad token: &#x27; + lexer.next());
+        }
+    };
+    
+    win.XPathExpression.prototype.evaluate = function(node, type) {
+        return new XPathResult(this.expr.evaluate(new Ctx(node)), type);
+    };
+    
+    win.XPathResult = function (value, type) {
+        if (type == 0) {
+            switch (typeof value) {
+                case &#x27;object&#x27;:  type ++; // 4
+                case &#x27;boolean&#x27;: type ++; // 3
+                case &#x27;string&#x27;:  type ++; // 2
+                case &#x27;number&#x27;:  type ++; // 1
+            }
+        }
+    
+        this.resultType = type;
+    
+        switch (type) {
+            case 1:
+                this.numberValue = value.isNodeSet ? value.number() : +value;
+                return;
+            case 2:
+                this.stringValue = value.isNodeSet ? value.string() : &#x27;&#x27; + value;
+                return;
+            case 3:
+                this.booleanValue = value.isNodeSet ? value.bool() : !! value;
+                return;
+            case 4: case 5: case 6: case 7:
+                this.nodes = value.list();
+                this.snapshotLength = value.length;
+                this.index = 0;
+                this.invalidIteratorState = false;
+                break;
+            case 8: case 9:
+                this.singleNodeValue = value.first();
+                return;
+        }
+    };
+    
+    win.XPathResult.prototype.iterateNext = function() { return this.nodes[this.index++] };
+    win.XPathResult.prototype.snapshotItem = function(i) { return this.nodes[i] };
+    
+    win.XPathResult.ANY_TYPE = 0;
+    win.XPathResult.NUMBER_TYPE = 1;
+    win.XPathResult.STRING_TYPE = 2;
+    win.XPathResult.BOOLEAN_TYPE = 3;
+    win.XPathResult.UNORDERED_NODE_ITERATOR_TYPE = 4;
+    win.XPathResult.ORDERED_NODE_ITERATOR_TYPE = 5;
+    win.XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE = 6;
+    win.XPathResult.ORDERED_NODE_SNAPSHOT_TYPE = 7;
+    win.XPathResult.ANY_UNORDERED_NODE_TYPE = 8;
+    win.XPathResult.FIRST_ORDERED_NODE_TYPE = 9;
+    
+    
+    win.document.createExpression = function(expr) {
+        return new XPathExpression(expr, null);
+    };
+    
+    win.document.evaluate = function(expr, context, _, type) {
+        return document.createExpression(expr, null).evaluate(context, type);
+    };
+};
+
+var win;
+
+if (config.targetFrame) {
+    var frame = document.getElementById(config.targetFrame);
+    if (frame) win = frame.contentWindow;
+}
+
+install(win || window);
+
+})();
+
+// Thanks for reading this source code. We love JavaScript.
+
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>
