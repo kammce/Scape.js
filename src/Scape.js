@@ -6,10 +6,11 @@
  * @module ScapeJS
  */
 
-var path = {};
-var generator = new Generator(), // utility
-	communicator = new AjaxCommunicator(), // utility
-	constructor = new Constructor(),	// utility
-	maninpulator = new ContentManipulator(), // view
-	storage = new Storage(),		// model
-	router = new Navigator()		// controller
+function Scape() {
+	this.generator = new Generator(); // utility
+	this.communicator = new AjaxCommunicator(); // utility
+	this.constructor = new Constructor();	// utility
+	this.maninpulator = new ContentManipulator(); // view
+	this.storage = new Storage();		// model
+	this.router = new Navigator();		// controller
+}
