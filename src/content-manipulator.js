@@ -6,7 +6,21 @@
  * @main
  */
 function ContentManipulator() {
+	var parent = this;
 	this.view_target = "";
+	var handleClearView = function(e) {
+		parent.clearView();
+	}
+	var handlePresentView = function(e) {
+		console.log('testing');
+		parent.presentView();
+	}
+	var handleSetupDivAjax = function(e) {
+		parent.setTargetDivAjax(e.detail.page, e.detail.funct);
+	}
+	document.addEventListener("clearView", handleClearView);
+	document.addEventListener("presentView", handlePresentView);
+	document.addEventListener("setTargetDivAjax", handleSetupDivAjax);
 }
 /**
  * Sets view for the whole application. Must be a <div>
@@ -41,6 +55,7 @@ ContentManipulator.prototype.clearView = function() {
  * @for ContentManipulator
  */
 ContentManipulator.prototype.presentView = function() {
+	console.log("did you happen too early?");
 	$(this.view_target).animate({ opacity: 1 }, 500);
 };
 

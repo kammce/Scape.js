@@ -9,7 +9,6 @@ _s.storage.addData("modules");
 _s.maninpulator.setView("#content");
 
 /* === PHASE: navigation	=== */
-
 _s.router.addRoute("", "pages/dashboard.html");
 _s.router.addRoute("dashboard", "pages/dashboard.html");
 _s.router.addRoute("membership-add", "pages/membership-add.html");
@@ -19,7 +18,6 @@ _s.router.addRoute("membership-permissions", "pages/membership-permissions.html"
 _s.router.addRoute("membership-info", "pages/membership-info.html");
 
 /* === PHASE: Communicator === */
-
 _s.communicator.addRequest("getNewMember", "server-side/Membership-Inquiry.php", false);
 _s.communicator.addRequest("addNewMember", "server-side/Membership-Inquiry.php", false);
 _s.communicator.addRequest("addMember", "server-side/Membership-Inquiry.php", false);
@@ -31,7 +29,6 @@ _s.communicator.addRequest("getPermissions", "server-side/Membership-Inquiry.php
 /* === PHASE: Storage		=== */
 
 /* === PHASE: Generator 	=== */
-
 _s.generator.addFactory("sidenav", function(params) {
 	console.log(params);
 	params = params;

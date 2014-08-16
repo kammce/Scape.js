@@ -7,6 +7,7 @@
  */
 
 function Constructor() {
+	var parent = this;
 	/**
 	 * Current page
 	 *
@@ -29,6 +30,11 @@ function Constructor() {
 	 * @type Array/Map
 	 */
 	this.procedures = {};
+	var setupHandler = function(e) {
+		console.log(e.detail.page);
+		parent.setup(e.detail.page);
+	}
+	document.addEventListener("ConstructorSetup", setupHandler);
 }
 
 /**
@@ -41,10 +47,14 @@ function Constructor() {
  * @return {Boolean} true if setup was successful
  */
 Constructor.prototype.setup = function(page, param) {
+
+	console.log("did you happen too late?");
 	if (this.procedures.hasOwnProperty(page)) {
 		this.procedures[page](param);
 		this.current_page = page;
 		this.current_param = param;
+
+		document.dispatchEvent(evt.maninpulator.presentView);
 		return true;
 	} else {
 		console.debug("[CONSTRUCTOR] Could not find procedure '"+page+"'");
