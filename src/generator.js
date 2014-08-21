@@ -40,7 +40,7 @@ Generator.prototype.addFactory = function(key, funct) {
  * @return {String} returns empty string if key does not exist. Otherwise return string (HTML) resulting from factory.
  */
 Generator.prototype.manifest = function(key, params) {
-    if(objExists(this.factory[key])) {
+    if(!_.isUndefined(this.factory[key])) {
         return this.factory[key](params);
     } else {
         console.debug("[GENERATOR] Could not find factory");

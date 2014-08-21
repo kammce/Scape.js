@@ -17,7 +17,7 @@ function AjaxCommunicator() {
 	 * @final
 	 */
 	this.default_error_function =  function(e) {
-		bootbox.alert('Error: Failed to contact server. Refresh page and try again.');
+		console.debug('Error: Failed to contact server. Refresh page and try again.');
 	};
 	/**
 	 * Stored results from last HTTP Request.
@@ -62,12 +62,12 @@ function AjaxCommunicator() {
 AjaxCommunicator.prototype.format = function(action, data)
 {
 	var msg = "";
-	if(objExists(action)) {
+	if(!_.isUndefined(action)) {
 		msg = "action="+action;
-		if(objExists(data)) {
-			if(typeof data == "string") {
+		if(!_.isUndefined(data)) {
+			if(_.isString(data)) {
 				msg += "&data="+data;
-			} else if(typeof data == "object") {
+			} else if(_.isObject(data)) {
 				msg += "&data="+JSON.stringify(data);
 			}
 		}
@@ -86,24 +86,17 @@ AjaxCommunicator.prototype.format = function(action, data)
 AjaxCommunicator.prototype.validateResponse = function(response)
 {
 	console.debug(response);
-	if(objExists(response) && typeof response == "string") {
+	if(!_.isUndefined(response) && _.isString(response)) {
 		if(response.contains("SERVER:")) {
 			response = response.substr(response.indexOf("SERVER:")+"SERVER:".length);
 			response = JSON.parse(response);
-			if(objExists(response["token"]) && objExists(response["response"]))
+			if(_.has(response, "token") && _.has(response, "response"))
 			{
-				if(response["response"] == "SIGNOUT") { return "SIGNOUT"; }
-				/*console.debug("level 4");
-				var len = response["token"].length;
-				var res = typeof response["response"];
-				if(len == 30 && res == "string") {
-					console.debug("level 5");
-					return response;
-				}*/
-				if(response["response"].indexOf("JSON:") != -1) {
-					response["response"] = response["response"].substr(response["response"].indexOf("JSON:")+"JSON:".length);
+				var res = response["response"];
+				if(res.contains("JSON:")) {
+					res = res.substr(res.indexOf("JSON:")+"JSON:".length);
 				}
-				return response;
+				return res;
 			}
 		}
 	}
@@ -127,27 +120,27 @@ AjaxCommunicator.prototype.send = function(url, success_function, message, error
 	var payload = this.ajax_template;
 	var parent = this;
 	console.log(message);
-	if(!objExists(url)) {
+	if(_.isUndefined(url)) {
 		throw "[AjaxCommunicator] url missing, aborting HTTP REQUEST.";
 		return;
 	}
-	if(!objExists(message)) {
+	if(_.isUndefined(message)) {
 		message = "";
 	}
-	if(objExists(success_function)) {
+	if(!_.isUndefined(success_function)) {
 		payload.success = function(data) {
 			data = parent.validateResponse(data);
-			success_function(data.response, success, failure);
+			success_function(data, success, failure);
 			parent.result = data;
 		};
 	} else {
 		throw "[AjaxCommunicator] url missing, aborting HTTP REQUEST.";
 		return;
 	}
-	if(objExists(error_function)) {
+	if(!_.isUndefined(error_function)) {
 		payload.error = error_function;
 	}
-	if(objExists(async)) {
+	if(!_.isUndefined(async)) {
 		payload.async = async;
 	}
 	payload.url = url;
@@ -176,23 +169,24 @@ AjaxCommunicator.prototype.send = function(url, success_function, message, error
  */
 AjaxCommunicator.prototype.addRequest = function(action, path, async, done, error) {
 	var parent = this;
-	if(!objExists(done) || typeof done != "function") {
+	if(_.isUndefined(done) || !_.isFunction(done)) {
 		done = function (data, success, failure) {
 			console.log("[AJAX: "+action+"] = "+data);
-			if(typeof data == "string") {
+			if(_.isString(data)) {
 				if(data.contains("FAILURE")) {
-					if(objExists(failure)) {
+					if(!_.isUndefined(failure)) {
+						data = data.replace("FAILURE", "");
 						failure(data);
 					}
 				} else {
-					if(objExists(success)) {
+					if(!_.isUndefined(success)) {
 						success(data);
 					}
 				}
 			}
 		};
 	}
-	if(!objExists(async)) { async == false; }
+	if(_.isUndefined(async)) { async == false; }
 	this.requests[action] = function(data, success, failure) {
 		parent.send(path, done, data, error, async, success, failure);
 	}
@@ -216,12 +210,12 @@ AjaxCommunicator.prototype.addRequest = function(action, path, async, done, erro
  * @param failure {Function} function to run if server responses with "FAILURE".
  */
 AjaxCommunicator.prototype.request = function(action, data, success, failure) {
-	if(!objExists(success)) {
+	if(_.isUndefined(success)) {
 		throw "[AjaxCommunicator] All requests need success functions";
 		console.error("[AjaxCommunicator] Could not find request");
 	}
 
-	if(objExists(this.requests[action])) {
+	if(!_.isUndefined(this.requests[action])) {
 		var msg = this.format(action, data);
 		this.requests[action](msg, success, failure);
 	} else {

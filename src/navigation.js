@@ -30,7 +30,7 @@ Router.prototype.route = function() {
 	this.allowInterrupt = false;
 	console.debug("[NAVIGATION] hash = " +hash);
 
-	if(objExists(this.routes[""+hash])) {
+	if(!_.isUndefined(this.routes[""+hash])) {
 		this.routes[hash]();
 		this.previousHash = hash;
 	} else {
@@ -53,12 +53,10 @@ Router.prototype.addRoute = function(key, page, funct) {
 	this.routes[key] = function() {
 		document.dispatchEvent(evt.maninpulator.clearView);
 		var wrapper = function() {
-			console.log("wrapper? anyone?");
-			if(objExists(funct)) {
+			if(!_.isUndefined(funct)) {
 				funct();
 			} else {
 				evt.constructor.setup.detail.page = parent.currentHash;
-				console.log(evt.constructor.setup.detail.page);
 				document.dispatchEvent(evt.constructor.setup);
 			}
 			allowInterrupt = true;
@@ -69,7 +67,7 @@ Router.prototype.addRoute = function(key, page, funct) {
 
 		/*maninpulator.clearView();
 		maninpulator.setTargetDivAjax(page, function() {
-			if(objExists(funct)) {
+			if(!_.isUndefined(funct)) {
 				funct();
 			} else {
 				constructor.setup(key);

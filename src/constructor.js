@@ -31,7 +31,6 @@ function Constructor() {
 	 */
 	this.procedures = {};
 	var setupHandler = function(e) {
-		console.log(e.detail.page);
 		parent.setup(e.detail.page);
 	}
 	document.addEventListener("ConstructorSetup", setupHandler);
@@ -47,8 +46,6 @@ function Constructor() {
  * @return {Boolean} true if setup was successful
  */
 Constructor.prototype.setup = function(page, param) {
-
-	console.log("did you happen too late?");
 	if (this.procedures.hasOwnProperty(page)) {
 		this.procedures[page](param);
 		this.current_page = page;

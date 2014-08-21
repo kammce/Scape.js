@@ -12,7 +12,6 @@ function ContentManipulator() {
 		parent.clearView();
 	}
 	var handlePresentView = function(e) {
-		console.log('testing');
 		parent.presentView();
 	}
 	var handleSetupDivAjax = function(e) {
@@ -30,7 +29,7 @@ function ContentManipulator() {
  * @param target {String} selector of a single <div> element
  */
 ContentManipulator.prototype.setView = function(target) {
-	if(objExists(target) && typeof target == "string" && $(target).is( "div" )) {
+	if(!_.isUndefined(target) && typeof target == "string" && $(target).is( "div" )) {
 		this.view_target = target;
 		return true;
 	} else {
@@ -55,7 +54,6 @@ ContentManipulator.prototype.clearView = function() {
  * @for ContentManipulator
  */
 ContentManipulator.prototype.presentView = function() {
-	console.log("did you happen too early?");
 	$(this.view_target).animate({ opacity: 1 }, 500);
 };
 
@@ -90,10 +88,10 @@ ContentManipulator.prototype.setContentDivAjax = function(destination, url, call
 		    cache:false,
 			success: function (data) {
 				$(parent.view_target).html(data);
-				if(objExists(callback)) { callback(); }
+				if(!_.isUndefined(callback)) { callback(); }
 			},
 			error: function(e) {
-				bootbox.alert('Error: '+e);
+				console.debug('Error: '+e);
 			},
 			async:false
 		});
@@ -115,11 +113,11 @@ ContentManipulator.prototype.setTargetDivAjax = function(url, callback) {
 		    cache: false,
 			success: function (data) {
 				$(parent.view_target).html(data);
-				if(objExists(callback)) { callback(); }
+				if(!_.isUndefined(callback)) { callback(); }
 				//autoSetupLayout();
 			},
 			error: function(e) {
-				bootbox.alert('Page: '+url+" could not be loaded");
+				console.debug('Page: '+url+" could not be loaded");
 				console.debug(e);
 			},
 			async:false
@@ -144,11 +142,11 @@ ContentManipulator.prototype.setModularDivAjax = function(url, callback) {
 		    cache:false,
 			success: function (data) {
 				$(parent.view_target).html(data);
-				if(objExists(callback)) { callback(); }
+				if(!_.isUndefined(callback)) { callback(); }
 				//autoSetupLayout();
 			},
 			error: function(e) {
-				bootbox.alert('Error: '+e);
+				console.debug('Error: '+e);
 			},
 			async:false
 		});
@@ -168,7 +166,7 @@ ContentManipulator.prototype.swapContentDiv = function(destination, source, call
 	$(destination).fadeOut(500, function() {
 		$(destination).html($(source).html());
 		$(destination).fadeIn(500, function() {
-			if(objExists(callback)) { callback(); }
+			if(!_.isUndefined(callback)) { callback(); }
 		});
 	});
 };
