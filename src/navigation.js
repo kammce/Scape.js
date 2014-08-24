@@ -9,9 +9,42 @@
 function Router() {
 	var parent = this;
 	this.allowInterrupt = true;
+	/**
+	 * Stores current previous hash in the routing fails. This is used to revert to the previous page.
+	 *
+	 * @property previousHash
+	 * @type String
+	 */
 	this.previousHash = "";
+
+	/**
+	 * This array is a map of all of the routes created by addRoute. The keys are strings and the values are functions.
+	 *
+	 * @property requests
+	 * @type Array/Map
+	 */
 	this.routes = [];
-	this.currentHash = "";
+	/**
+	 * Event to be ran after hash has changed and before routing has finished.
+	 *
+	 * @property routingBegun
+	 * @type Function
+	 */
+	this.routingBegun = function() {};
+	/**
+	 * Event to be ran after hash has changed and routing hash finished.
+	 *
+	 * @property routingFinshed
+	 * @type Function
+	 */
+	this.routingFinshed = function() {};
+	/**
+	 * Stores current hash.
+	 *
+	 * @property hash
+	 * @type String
+	 */
+	this.hash = "";
 }
 /**
  * The actual method that does all of the routes and routing when the hash changes.
@@ -20,10 +53,11 @@ function Router() {
  * @for Router
  */
 Router.prototype.route = function() {
+	this.routingBegun(location.hash);
 	var hash = this.getHash();
 	/* If allow interrupt is false, stop what you are doing */
 	if(!this.allowInterrupt) {
-		location.hash =	this.previous_hash;
+		location.hash =	this.previousHash;
 		return;
 	}
 	/* allow hash to change */
@@ -37,7 +71,8 @@ Router.prototype.route = function() {
 		console.debug("[NAVIGATION] Could not find route: '"+hash+"'");
 	}
 	this.allowInterrupt = true;
-	this.currentHash = hash;
+	this.hash = hash;
+	this.routingFinshed(location.hash);
 };
 /**
  * Creates a new route to go when the route name and the hash match up (NOTE: this ignores url parameters).
@@ -56,7 +91,7 @@ Router.prototype.addRoute = function(key, page, funct) {
 			if(!_.isUndefined(funct)) {
 				funct();
 			} else {
-				evt.constructor.setup.detail.page = parent.currentHash;
+				evt.constructor.setup.detail.page = parent.hash;
 				document.dispatchEvent(evt.constructor.setup);
 			}
 			allowInterrupt = true;
@@ -193,4 +228,30 @@ Router.prototype.getHash = function() {
 		hash = hash.substr(0, end);
 	}
 	return hash;
+};
+/**
+ * Set routingBegun property
+ *
+ * @method setRouteBegun
+ * @for Router
+ */
+Router.prototype.setRouteBegun = function(funct) {
+	if(_.isFunction(funct)) {
+		this.routingBegun = funct;
+	} else {
+		throw "[ROUTER] setRouteBegun only accepts functions as parameter";
+	}
+};
+/**
+ * Set routingFinished property
+ *
+ * @method setRouteFinished
+ * @for Router
+ */
+Router.prototype.setRouteFinished = function(funct) {
+	if(_.isFunction(funct)) {
+		this.routingFinshed = funct;
+	} else {
+		throw "[ROUTER] setRouteFinished only accepts functions as parameter";
+	}
 };

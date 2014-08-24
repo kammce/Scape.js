@@ -175,7 +175,7 @@ AjaxCommunicator.prototype.addRequest = function(action, path, async, done, erro
 			if(_.isString(data)) {
 				if(data.contains("FAILURE")) {
 					if(!_.isUndefined(failure)) {
-						data = data.replace("FAILURE", "");
+						data = data.replace(/^FAILURE[:]*/, "");
 						failure(data);
 					}
 				} else {
